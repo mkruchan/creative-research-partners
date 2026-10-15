@@ -13061,52 +13061,52 @@ window.addEventListener('DOMContentLoaded', function() {
 </style>
 <script>
   (function () {
+    // Driven by the pointer position on every mousemove (not mouseenter/leave, which are unreliable while the
+    // sidebar is sliding under a still cursor). Collapsed + pointer on the icon rail -> open after 140ms;
+    // pointer off the sidebar -> close after 300ms. After a click inside, stay closed until the pointer leaves.
     const desktop = () => matchMedia('(min-width: 769px) and (hover: hover)').matches;
-    let hideTimer, showTimer;
-    const collapsed = () => document.body.classList.contains('sidebar-collapsed');
-    const show = () => { clearTimeout(hideTimer); if (collapsed() && desktop()) document.body.classList.add('sidebar-peek'); };
-    // hide only if the pointer really is outside the sidebar/button/edge when the timer fires (the sidebar slides
-    // under a still cursor, so enter/leave events alone are unreliable mid-animation)
-    let px = -1, py = -1;
-    document.addEventListener('mousemove', e => { px = e.clientX; py = e.clientY; }, { passive: true });
-    const overPeekArea = () => {
-      if (px < 0) return false;
-      const el = document.elementFromPoint(px, py);
-      return !!el && !!el.closest('#ds-sidebar');
-    };
-    const hide = (delay = 300) => {
-      clearTimeout(showTimer); clearTimeout(hideTimer);
-      hideTimer = setTimeout(function check() {
-        if (delay && overPeekArea()) { hideTimer = setTimeout(check, 250); return; }
-        document.body.classList.remove('sidebar-peek');
-      }, delay);
-    };
+    const body = document.body;
+    const collapsed = () => body.classList.contains('sidebar-collapsed');
+    const peeking = () => body.classList.contains('sidebar-peek');
+    let showTimer = 0, hideTimer = 0, suppress = false;
+    const open = () => { showTimer = 0; if (collapsed() && desktop() && !suppress) body.classList.add('sidebar-peek'); };
+    const close = () => { hideTimer = 0; body.classList.remove('sidebar-peek'); };
+    const cancelShow = () => { clearTimeout(showTimer); showTimer = 0; };
+    const cancelHide = () => { clearTimeout(hideTimer); hideTimer = 0; };
+    function onPointer(target) {
+      if (!collapsed() || !desktop()) { cancelShow(); cancelHide(); if (peeking()) close(); return; }
+      const inside = !!(target && target.closest && target.closest('#ds-sidebar'));
+      if (inside) {
+        cancelHide();
+        if (!peeking() && !showTimer && !suppress) showTimer = setTimeout(open, 140);
+      } else {
+        suppress = false;
+        cancelShow();
+        if (peeking() && !hideTimer) hideTimer = setTimeout(close, 300);
+      }
+    }
     function init() {
       const sb = document.getElementById('ds-sidebar'), btn = document.getElementById('ds-hdr-collapse-btn');
       if (!sb || !btn || sb.dataset.peek) return;
       sb.dataset.peek = '1';
-      const edge = document.createElement('div');
-      edge.className = 'ds-peek-edge'; edge.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(edge);
       const logo = sb.querySelector('.ds-sidebar-logo');
       if (logo) {
         const pin = document.createElement('button');
         pin.type = 'button'; pin.className = 'ds-peek-pin'; pin.title = 'Keep sidebar open';
         pin.innerHTML = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M6 1v14"/></svg>';
-        pin.addEventListener('click', e => { e.stopPropagation(); document.body.classList.remove('sidebar-peek'); if (collapsed()) toggleSidebar(); });
+        pin.addEventListener('click', e => { e.stopPropagation(); cancelShow(); cancelHide(); close(); if (collapsed()) toggleSidebar(); });
         logo.appendChild(pin);
       }
-      // the header button only toggles on click; hovering it does nothing (the icon rail itself opens on hover)
-      btn.addEventListener('click', () => document.body.classList.remove('sidebar-peek'));   // click still pins/unpins as before
-      edge.addEventListener('mouseenter', () => { clearTimeout(showTimer); showTimer = setTimeout(show, 120); });
-      edge.addEventListener('mouseleave', () => hide());
-      sb.addEventListener('mouseenter', () => {
-        if (document.body.classList.contains('sidebar-peek')) { clearTimeout(hideTimer); return; }
-        clearTimeout(showTimer); showTimer = setTimeout(show, 140);
+      // the header button only toggles on click; hovering it does nothing
+      btn.addEventListener('click', () => { cancelShow(); cancelHide(); close(); });
+      document.addEventListener('mousemove', e => onPointer(e.target), { passive: true });
+      document.documentElement.addEventListener('mouseleave', () => onPointer(null));   // pointer left the window
+      sb.addEventListener('click', e => {
+        if (peeking() && e.target.closest('.ds-nav-item') && !e.target.closest('#themeToggle, .appearance-menu')) {
+          suppress = true; cancelShow(); cancelHide(); close();
+        }
       });
-      sb.addEventListener('mouseleave', () => hide());
-      sb.addEventListener('click', e => { if (e.target.closest('a, .ds-nav-item, [onclick]') && !e.target.closest('.ds-peek-pin, .ds-sidebar-logo')) hide(0); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(0); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') { suppress = true; cancelShow(); cancelHide(); close(); } });
     }
     function titles() {
       document.querySelectorAll('#ds-sidebar .ds-nav-item').forEach(b => { if (!b.title) b.title = b.textContent.replace(/\s+/g, ' ').trim(); });
