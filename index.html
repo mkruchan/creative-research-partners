@@ -12936,7 +12936,6 @@ window.addEventListener('DOMContentLoaded', function() {
     background: var(--accent-muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z'/%3E%3Cpath d='M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z'/%3E%3C/svg%3E") center / 20px no-repeat;
   }
   #n8n-chat .chat-header h1 { margin: 0; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
-  #n8n-chat .chat-header h1::after { content: "AI"; font-size: 10px; font-weight: 700; letter-spacing: .06em; padding: 2px 6px; border-radius: 6px; background: var(--blue-bg); color: var(--blue-text); }
   #n8n-chat .chat-header p { margin: 0; color: var(--text-secondary); }
   #n8n-chat .chat-header .chat-close-button { color: var(--text-secondary); }
   #n8n-chat .chat-message { box-shadow: var(--shadow-xs); max-width: 88%; }
@@ -12947,13 +12946,40 @@ window.addEventListener('DOMContentLoaded', function() {
   #n8n-chat .chat-message-markdown li { margin: 2px 0; }
   #n8n-chat .chat-message-markdown strong { font-weight: 600; }
   #n8n-chat .chat-message-markdown h1, #n8n-chat .chat-message-markdown h2, #n8n-chat .chat-message-markdown h3 { font-size: 13.5px; font-weight: 600; margin: 10px 0 4px; }
-  #n8n-chat .chat-message-markdown table { border-collapse: collapse; width: 100%; margin: 6px 0; font-size: 12.5px; font-variant-numeric: tabular-nums; }
-  #n8n-chat .chat-message-markdown th { text-align: left; font-weight: 600; color: var(--text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
-  #n8n-chat .chat-message-markdown th, #n8n-chat .chat-message-markdown td { padding: 5px 8px; border-bottom: 1px solid var(--border-light); }
+  /* Tables in answers. The page has global table rules (fixed layout, max-content width, white row on hover,
+     zero cell padding, hidden overflow) — reset them all here so answers stay readable in light and dark. */
+  #n8n-chat .chat-message-from-bot:has(table) { max-width: 100%; }
+  #n8n-chat .chat-message-markdown table {
+    display: block; overflow-x: auto; max-width: 100%; width: auto; table-layout: auto;
+    border-collapse: collapse; border-spacing: 0; margin: 8px 0; font-size: 12.5px; line-height: 1.45;
+    font-variant-numeric: tabular-nums; -webkit-overflow-scrolling: touch;
+  }
+  #n8n-chat .chat-message-markdown thead, #n8n-chat .chat-message-markdown tbody { background: transparent !important; }
+  #n8n-chat .chat-message-markdown tr,
+  #n8n-chat .chat-message-markdown tbody tr:hover,
+  #n8n-chat .chat-message-markdown tbody tr:nth-child(even) { background: transparent !important; position: static; border: 0 !important; box-shadow: none !important; }
+  #n8n-chat .chat-message-markdown th, #n8n-chat .chat-message-markdown td {
+    padding: 6px 10px !important; border: 0; border-bottom: 1px solid var(--border-light) !important;
+    vertical-align: top; overflow: visible !important; white-space: normal;
+    word-break: normal; overflow-wrap: normal; hyphens: none; min-width: 72px; max-width: 260px;
+    color: var(--text-primary); background: transparent !important;
+  }
+  #n8n-chat .chat-message-markdown th {
+    position: static; text-align: left; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-secondary); white-space: nowrap; user-select: auto;
+  }
+  #n8n-chat .chat-message-markdown td:first-child, #n8n-chat .chat-message-markdown th:first-child { min-width: 0; padding-left: 0 !important; }
+  #n8n-chat .chat-message-markdown tbody tr:last-child td { border-bottom: 0 !important; }
+  #n8n-chat .chat-message-markdown tbody tr:hover td { background: var(--accent-muted) !important; }
   #n8n-chat .chat-message-markdown a { color: var(--accent); }
   #n8n-chat .chat-inputs { padding: 12px 14px 6px; gap: 6px; }
   #n8n-chat .chat-inputs textarea:focus { box-shadow: 0 0 0 3px var(--accent-muted); outline: none; }
   #n8n-chat .chat-footer::after { content: "AI answers from our research and Everflow stats. Double-check before you spend."; display: block; padding: 0 16px 10px; font-size: 11px; color: var(--text-muted); text-align: center; }
+  #n8n-chat ::-webkit-scrollbar { width: 6px; height: 6px; }
+  #n8n-chat ::-webkit-scrollbar-track { background: transparent !important; border: 0 !important; }
+  #n8n-chat ::-webkit-scrollbar-thumb { background: var(--border-mid) !important; border: 0 !important; border-radius: 99px; }
+  #n8n-chat ::-webkit-scrollbar-corner { background: transparent !important; }
+  #n8n-chat .chat-body, #n8n-chat .chat-message-markdown table { scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent; }
   @media (max-width: 480px) { #n8n-chat { --chat--window--width: calc(100vw - 24px); --chat--window--height: calc(100dvh - 110px); --chat--window--right: 12px; --chat--window--bottom: 12px; } }
   @media (prefers-reduced-motion: reduce) { #n8n-chat { --chat--transition-duration: 0s; } }
 </style>
