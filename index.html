@@ -13024,12 +13024,12 @@ window.addEventListener('DOMContentLoaded', function() {
 </script>
 <style>
   /* Collapsed sidebar "peek": hover the sidebar button (or the left edge) to slide the sidebar over the page,
-     like Chrome's collapsed tab strip; it hides again when the mouse leaves. The pin keeps it open. */
+     like Chrome's collapsed tab strip; it hides again when the mouse leaves. */
   @media (min-width: 769px) and (hover: hover) {
     body.sidebar-collapsed.sidebar-peek .ds-sidebar { transform: translateX(0) !important; box-shadow: 8px 0 32px rgba(0,0,0,.18); }
     body.force-dark.sidebar-collapsed.sidebar-peek .ds-sidebar { box-shadow: 8px 0 32px rgba(0,0,0,.55); }
     /* Collapsed = icon rail (like Chrome's collapsed vertical tabs): the sidebar stays visible as a 60px strip of
-       icons; hovering it (or the header button) slides the full sidebar out over the page. */
+       icons; hovering it slides the full sidebar out over the page; the header button pins/unpins. */
     body.sidebar-collapsed .ds-sidebar { transform: none !important; width: 60px !important; transition: width .2s cubic-bezier(.4,0,.2,1), box-shadow .2s !important; }
     body.sidebar-collapsed.sidebar-peek .ds-sidebar { width: var(--sidebar-w) !important; }
     body.sidebar-collapsed .ds-main { margin-left: 60px !important; width: calc(100% - 60px) !important; }
@@ -13049,12 +13049,6 @@ window.addEventListener('DOMContentLoaded', function() {
     body.sidebar-collapsed:not(.sidebar-peek) #themeToggle .appearance-chevron { display: none !important; }
     body.sidebar-collapsed:not(.sidebar-peek) #ds-sidebar { overflow-y: hidden; }
     .ds-peek-edge { display: none !important; }
-    .ds-peek-pin { display: none; position: absolute; top: 21px; right: 12px; width: 30px; height: 30px; border: 0; border-radius: 8px;
-      background: transparent; color: var(--text-secondary); cursor: pointer; align-items: center; justify-content: center; }
-    .ds-peek-pin:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-    body.sidebar-collapsed.sidebar-peek .ds-peek-pin { display: flex; }
-    #ds-sidebar .ds-sidebar-logo .ds-peek-pin svg, #ds-sidebar .ds-sidebar-logo .ds-peek-pin svg * { fill: none !important; stroke: currentColor !important; }
-    #ds-sidebar .ds-sidebar-logo .ds-peek-pin svg { width: 15px !important; height: 15px !important; }
     .ds-sidebar-logo { position: relative; }
   }
   @media (prefers-reduced-motion: reduce) { .ds-sidebar { transition: none !important; } }
@@ -13089,14 +13083,6 @@ window.addEventListener('DOMContentLoaded', function() {
       const sb = document.getElementById('ds-sidebar'), btn = document.getElementById('ds-hdr-collapse-btn');
       if (!sb || !btn || sb.dataset.peek) return;
       sb.dataset.peek = '1';
-      const logo = sb.querySelector('.ds-sidebar-logo');
-      if (logo) {
-        const pin = document.createElement('button');
-        pin.type = 'button'; pin.className = 'ds-peek-pin'; pin.title = 'Keep sidebar open';
-        pin.innerHTML = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M6 1v14"/></svg>';
-        pin.addEventListener('click', e => { e.stopPropagation(); cancelShow(); cancelHide(); close(); if (collapsed()) toggleSidebar(); });
-        logo.appendChild(pin);
-      }
       // the header button only toggles on click; hovering it does nothing
       btn.addEventListener('click', () => { cancelShow(); cancelHide(); close(); });
       document.addEventListener('mousemove', e => onPointer(e.target), { passive: true });
