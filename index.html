@@ -12960,7 +12960,9 @@ window.addEventListener('DOMContentLoaded', function() {
         const hcs = getComputedStyle(c.th);
         const headNeed = textW(c.th.textContent.trim(), c.th) + (parseFloat(hcs.paddingLeft) || 0) + (parseFloat(hcs.paddingRight) || 0) + 14;
         const need = Math.max(headNeed, 36, ...rows.map(r => cellNeed(r.cells[c.i])));
-        const w = Math.round(Math.min(base, need));          // only ever shrink; long-text columns keep their width
+        // text columns only shrink (long text wraps); badge columns (channel / funnel type) fit their longest badge
+        const badgeCol = rows.some(r => r.cells[c.i] && r.cells[c.i].querySelector('.sel-badge'));
+        const w = Math.round(badgeCol ? Math.min(need, 260) : Math.min(base, need));
         c.th.style.width = w + 'px';
         others += w;
       }
