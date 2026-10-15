@@ -13136,6 +13136,9 @@ window.addEventListener('DOMContentLoaded', function() {
   }
   #n8n-chat .chat-window { box-shadow: var(--shadow-lg); background: var(--surface); }
   #n8n-chat .chat-window-toggle { box-shadow: 0 6px 20px rgba(37,99,235,.35); }
+  /* AI sparkles instead of the speech bubble on the closed chat button (the open state keeps its chevron) */
+  #n8n-chat .chat-window-toggle svg:has(path[d^="M12 3c5.5"]) { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M10 2.5c.7 4.9 2.6 6.8 7.5 7.5-4.9.7-6.8 2.6-7.5 7.5-.7-4.9-2.6-6.8-7.5-7.5 4.9-.7 6.8-2.6 7.5-7.5z'/%3E%3Cpath d='M18.5 14c.35 2.2 1.1 2.95 3.3 3.3-2.2.35-2.95 1.1-3.3 3.3-.35-2.2-1.1-2.95-3.3-3.3 2.2-.35 2.95-1.1 3.3-3.3z'/%3E%3Cpath d='M18.5 2.5c.25 1.5.75 2 2.25 2.25-1.5.25-2 .75-2.25 2.25-.25-1.5-.75-2-2.25-2.25 1.5-.25 2-.75 2.25-2.25z'/%3E%3C/svg%3E") center / 28px no-repeat; }
+  #n8n-chat .chat-window-toggle svg path[d^="M12 3c5.5"] { display: none; }
   #n8n-chat .chat-header { display: flex; flex-direction: column; gap: 2px; padding-left: 64px !important; position: relative; }
   #n8n-chat .chat-header::before {
     content: ""; position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 10px;
