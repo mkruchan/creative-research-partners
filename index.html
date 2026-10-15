@@ -58,7 +58,7 @@
     // ── Loader globals — defined early so offerLoadAll can call them ──
     // ── Apply theme before first paint to avoid flash ──
     (function() {
-      var saved = localStorage.getItem('ecoverage_theme');
+      var saved = localStorage.getItem('partners_theme');
       var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       if (saved === 'dark' || (!saved && prefersDark) || (saved === 'auto' && prefersDark)) {
         document.documentElement.classList.add('force-dark-early');
@@ -73,8 +73,8 @@
     document.documentElement.scrollTop = 0;
     (function() {
       // Hide loader immediately if cached data exists
-      const lastId = localStorage.getItem('ecoverage_last_offer_id');
-      const cached = lastId && localStorage.getItem('ecoverage_offer_cache_' + lastId);
+      const lastId = localStorage.getItem('partners_last_offer_id');
+      const cached = lastId && localStorage.getItem('partners_offer_cache_' + lastId);
       if (cached) {
         document.addEventListener('DOMContentLoaded', function() {
           const el = document.getElementById('liftiq-loader');
@@ -7193,11 +7193,11 @@ const _initialTabSlug = (() => {
 })();
 // Per-file key — always keyed to the base path, not the slug URL
 const _pageKey = btoa(location.hostname + _basePath).replace(/[^a-zA-Z0-9]/g,'').slice(-16);
-const LS_SETTINGS = 'ecoverage_settings_v1_' + _pageKey;
-const LS_LOCAL    = 'ecoverage_local_v2_' + _pageKey;
-const LS_HISTORY  = 'ecoverage_history_v1_' + _pageKey;
-const LS_VER_CTR  = 'ecoverage_version_counter_' + _pageKey;
-const LS_DIR_CACHE = 'ecoverage_dir_cache';
+const LS_SETTINGS = 'partners_settings_v1_' + _pageKey;
+const LS_LOCAL    = 'partners_local_v2_' + _pageKey;
+const LS_HISTORY  = 'partners_history_v1_' + _pageKey;
+const LS_VER_CTR  = 'partners_version_counter_' + _pageKey;
+const LS_DIR_CACHE = 'partners_dir_cache';
 let BIN_ID  = _urlBin || '';
 let API_KEY = MASTER_API_KEY;
 
@@ -7306,8 +7306,8 @@ function editTitle() {
       newH1.textContent = newText;
     }
     wrap.replaceWith(newH1);
-    localStorage.setItem('ecoverage_title', newText);
-    localStorage.setItem('ecoverage_title_url', newUrl);
+    localStorage.setItem('partners_title', newText);
+    localStorage.setItem('partners_title_url', newUrl);
     updateOfferSlugPath(newText);
     document.title = newText;
     updateTitleLinkBtn(newUrl);
@@ -8865,7 +8865,7 @@ function adpStartRenameOffer(el) {
       if (badge) badge.textContent = newName;
     }
     // Save to Supabase
-    const offerId = _currentOfferId || localStorage.getItem('ecoverage_current_offer_id');
+    const offerId = _currentOfferId || localStorage.getItem('partners_current_offer_id');
     if (offerId && typeof sb !== 'undefined') {
       await sb.from('offers').update({ name: newName }).eq('id', offerId);
       if (typeof offerRebuildSelect === 'function') offerRebuildSelect();
@@ -9083,9 +9083,14 @@ document.addEventListener('click', e => {
 // ── Everflow offers block (partner edition) ──
 function _efEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 function _efFmtDate(d) { if (!d) return ''; const p = d.split('-'); return p.length === 3 ? `${p[2]}.${p[1]}.${p[0]}` : d; }
-function renderEfOffers(data) {
+// The page sometimes restores a cached copy of the report (built by collectData, which has no
+// efOffers), so the block is always looked up by the open report's id in partners.json.
+async function renderEfOffers(data) {
   const box = document.getElementById('ef-offers'), grid = document.getElementById('ef-offers-grid');
   if (!box || !grid) return;
+  const row = (await _partnerOffers()).find(r => r.id === _currentOfferId)
+    || (await _partnerOffers()).find(r => r.data?.header?.title && r.data.header.title === data?.header?.title);
+  if (row) data = row.data;
   const offers = (data && data.efOffers) || [];
   if (!offers.length) { box.style.display = 'none'; grid.innerHTML = ''; return; }
   const per = data.efPeriod || {};
@@ -9335,7 +9340,7 @@ function renderOffersList(filter) {
     const isActive = (typeof _currentOfferId !== 'undefined' && o.id === _currentOfferId) || o.id === '__local__';
     const date = (() => {
       // Prefer the analyst-set report date from meta — check cache first
-      const cached = localStorage.getItem('ecoverage_offer_cache_' + o.id);
+      const cached = localStorage.getItem('partners_offer_cache_' + o.id);
       const activeMeta = (isActive ? document.getElementById('meta-date')?.value : null) || '';
       const metaDate = activeMeta || o.date || (cached ? JSON.parse(cached).data?.meta?.date : null) || o.data?.meta?.date || o.data?.header?.date || '';
       if (metaDate) {
@@ -9401,11 +9406,11 @@ function toggleTheme() {
   if (isDark) {
     document.body.classList.remove('force-dark');
     document.body.classList.add('force-light');
-    localStorage.setItem('ecoverage_theme', 'light');
+    localStorage.setItem('partners_theme', 'light');
   } else {
     document.body.classList.remove('force-light');
     document.body.classList.add('force-dark');
-    localStorage.setItem('ecoverage_theme', 'dark');
+    localStorage.setItem('partners_theme', 'dark');
   }
   applyThemeUI();
 }
@@ -9421,7 +9426,7 @@ function setAppearance(mode) {
     var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.body.classList.add(prefersDark ? 'force-dark' : 'force-light');
   }
-  localStorage.setItem('ecoverage_theme', mode);
+  localStorage.setItem('partners_theme', mode);
   applyThemeUI();
   closeAppearanceMenu();
 }
@@ -9461,7 +9466,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function applyThemeUI() {
   const isDark = document.body.classList.contains('force-dark');
-  const saved = localStorage.getItem('ecoverage_theme') || 'auto';
+  const saved = localStorage.getItem('partners_theme') || 'auto';
   const btn = document.getElementById('themeToggle');
 
   if (btn) {
@@ -9487,7 +9492,7 @@ function applyThemeUI() {
 
 // Apply saved theme on load
 (function() {
-  var saved = localStorage.getItem('ecoverage_theme');
+  var saved = localStorage.getItem('partners_theme');
   if (saved === 'dark') {
     document.body.classList.add('force-dark');
   } else if (saved === 'light') {
@@ -9500,7 +9505,7 @@ function applyThemeUI() {
   // Also listen for system changes when in auto mode
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-      if (localStorage.getItem('ecoverage_theme') === 'auto') {
+      if (localStorage.getItem('partners_theme') === 'auto') {
         document.body.classList.remove('force-dark', 'force-light');
         document.body.classList.add(e.matches ? 'force-dark' : 'force-light');
       }
@@ -9830,24 +9835,24 @@ function modalSaveSite() {
   const url = document.getElementById('modal-url-input').value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
   const bin = document.getElementById('modal-bin-input').value.trim();
   if (!url || !bin) return;
-  const sites = JSON.parse(localStorage.getItem('ecoverage_saved_sites') || '{}');
+  const sites = JSON.parse(localStorage.getItem('partners_saved_sites') || '{}');
   sites[url] = bin;
-  localStorage.setItem('ecoverage_saved_sites', JSON.stringify(sites));
+  localStorage.setItem('partners_saved_sites', JSON.stringify(sites));
   document.getElementById('add-site-form').style.display = 'none';
   renderSavedSites();
   doSave();
 }
 
 function modalDeleteSite(url) {
-  const sites = JSON.parse(localStorage.getItem('ecoverage_saved_sites') || '{}');
+  const sites = JSON.parse(localStorage.getItem('partners_saved_sites') || '{}');
   delete sites[url];
-  localStorage.setItem('ecoverage_saved_sites', JSON.stringify(sites));
+  localStorage.setItem('partners_saved_sites', JSON.stringify(sites));
   renderSavedSites();
   doSave();
 }
 
 function renderSavedSites() {
-  const sites = JSON.parse(localStorage.getItem('ecoverage_saved_sites') || '{}');
+  const sites = JSON.parse(localStorage.getItem('partners_saved_sites') || '{}');
   const section = document.getElementById('saved-sites-section');
   const list = document.getElementById('modal-sites-list');
   const entries = Object.entries(sites);
@@ -10505,13 +10510,13 @@ function saveColWidths() {
     });
     if (table.style.width) data[id]['_tableW'] = table.style.width;
   });
-  localStorage.setItem('ecoverage_col_widths', JSON.stringify(data));
+  localStorage.setItem('partners_col_widths', JSON.stringify(data));
   scheduleCloudSave();
 }
 
 function restoreColWidths(cloudData) {
   try {
-    const data = cloudData || JSON.parse(localStorage.getItem('ecoverage_col_widths') || '{}');
+    const data = cloudData || JSON.parse(localStorage.getItem('partners_col_widths') || '{}');
     document.querySelectorAll('table').forEach(table => {
       const id = table.id || 'table';
       if (!data[id]) return;
@@ -10545,13 +10550,13 @@ function saveRowHeights() {
       if (tr.style.height) data[id][i] = tr.style.height;
     });
   });
-  localStorage.setItem('ecoverage_row_heights', JSON.stringify(data));
+  localStorage.setItem('partners_row_heights', JSON.stringify(data));
   scheduleCloudSave();
 }
 
 function restoreRowHeights(cloudData) {
   try {
-    const data = cloudData || JSON.parse(localStorage.getItem('ecoverage_row_heights') || '{}');
+    const data = cloudData || JSON.parse(localStorage.getItem('partners_row_heights') || '{}');
     document.querySelectorAll('table').forEach(table => {
       const id = table.id || 'table';
       if (!data[id]) return;
@@ -10935,7 +10940,7 @@ function _collectDataInner() {
     traffic: collectTable('traffic-body', ['num','source','geo','qty','type','notes']),
     ads: collectTable('ads-body', ['num','offer','channel','format','geo','lifecycle','landingPage','spyLink','fanPage','creative','angle','headline','cta','title','imp','notes']),
     funnels: collectTable('funnels-body', ['num','link','advertiser','everflow','efLink','efId','geo','trafficSource','type','obs']),
-    savedSites: JSON.parse(localStorage.getItem('ecoverage_saved_sites') || '{}'),
+    savedSites: JSON.parse(localStorage.getItem('partners_saved_sites') || '{}'),
   };
 }
 
@@ -10971,14 +10976,14 @@ function restoreData(data) {
     const h1 = document.getElementById('main-title');
     const t = data.header.title || ''; const tu = data.header.titleUrl || '';
     // Always persist titleUrl so runPostInit reads the correct value for this offer
-    localStorage.setItem('ecoverage_title_url', tu);
+    localStorage.setItem('partners_title_url', tu);
     updateTitleLinkBtn(tu);
     if (h1 && t) {
       h1.dataset.text = t; h1.dataset.url = tu;
       h1.style.cssText = 'color:var(--text-primary);margin:0;white-space:normal;word-break:break-word;background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:8px;padding:4px 14px;font-size:inherit;';
       if (tu) { const a = document.createElement('a'); a.href = tu; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; a.style.cssText = 'color:inherit;text-decoration:none;'; h1.innerHTML = ''; h1.appendChild(a); } else { h1.textContent = t; }
       // Persist to localStorage so runPostInit doesn't overwrite with stale value
-      if (t) { localStorage.setItem('ecoverage_title', t); document.title = 'Multi-Platform Creative Research'; }
+      if (t) { localStorage.setItem('partners_title', t); document.title = 'Multi-Platform Creative Research'; }
     }
 
   }
@@ -11015,7 +11020,7 @@ function restoreData(data) {
   restoreTable('ads-body', data.ads||[], adsRow, ['num','offer','channel','format','geo','lifecycle','landingPage','spyLink','fanPage','creative','angle','headline','cta','title','imp','notes']);
   restoreTable('funnels-body', data.funnels||[], funnelRow, ['num','link','advertiser','everflow','efLink','efId','geo','trafficSource','type','obs']);
   if (data.savedSites) {
-    try { localStorage.setItem('ecoverage_saved_sites', JSON.stringify(data.savedSites)); } catch(e) {}
+    try { localStorage.setItem('partners_saved_sites', JSON.stringify(data.savedSites)); } catch(e) {}
   }
   setTimeout(() => { resizeAllInputs(); updateAllBadges(); syncAllLinks(); initAllColResize(); updateFrozenOffsets(); applyTextColors(); restoreColWidths(data.colWidths); restoreRowHeights(data.rowHeights); setTimeout(resizeAllInputs, 50); centerTextareas(); initAllDragReorder(); setTimeout(syncNotesHeight, 50);
     // Reset all textarea scroll positions to show text from start
@@ -11585,7 +11590,7 @@ function runPostInit(cloudData) {
   const vm = localStorage.getItem('ads_view_mode'); setAdsView(vm === 'table' ? 'table' : 'grid');
   const tvm = localStorage.getItem('traffic_view_mode'); setTrafficView(tvm === 'grid' ? 'grid' : 'table');
   const fvm = localStorage.getItem('funnels_view_mode'); setFunnelsView(fvm === 'grid' ? 'grid' : 'table');
-  const t = localStorage.getItem('ecoverage_title'); const tu = localStorage.getItem('ecoverage_title_url') || '';
+  const t = localStorage.getItem('partners_title'); const tu = localStorage.getItem('partners_title_url') || '';
   if (t) { document.title = 'Multi-Platform Creative Research'; _offerSyncNamePill(t); const h = document.getElementById('main-title'); if (h) { h.dataset.text = t; h.dataset.url = tu; if (tu) { const a = document.createElement('a'); a.href = tu; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; a.style.cssText = 'color:inherit;text-decoration:underline;text-underline-offset:3px;'; h.innerHTML = ''; h.appendChild(a); } else { h.textContent = t; } } }
   updateTitleLinkBtn(tu);
   if (t) updateOfferSlugPath(t);
@@ -11669,9 +11674,9 @@ function runPostInit(cloudData) {
    SUPABASE + OFFER MANAGEMENT
 ═══════════════════════════════════════════════ */
 
-const SB_URL_KEY  = 'ecoverage_sb_url';
-const SB_KEY_KEY  = 'ecoverage_sb_key';
-const SB_OFFER_KEY = 'ecoverage_current_offer_id';
+const SB_URL_KEY  = 'partners_sb_url';
+const SB_KEY_KEY  = 'partners_sb_key';
+const SB_OFFER_KEY = 'partners_current_offer_id';
 
 let _sbClient      = null;
 let _currentOfferId = null;
@@ -11873,7 +11878,7 @@ async function offerLoad(id, showMsg) {
   _currentOfferId = id;
   localStorage.setItem(SB_OFFER_KEY, id);
 
-  const cacheKey = 'ecoverage_offer_cache_' + id;
+  const cacheKey = 'partners_offer_cache_' + id;
   const cachedRaw = localStorage.getItem(cacheKey);
   let cached = null;
   try { cached = cachedRaw ? JSON.parse(cachedRaw) : null; } catch(e) {}
@@ -11900,8 +11905,8 @@ async function offerLoad(id, showMsg) {
     // Cache is fresh — no need to refetch
     const sel = document.getElementById('offer-select');
     if (sel) sel.value = id;
-    localStorage.setItem('ecoverage_last_offer_name', cached.name || '');
-    localStorage.setItem('ecoverage_last_offer_id', id);
+    localStorage.setItem('partners_last_offer_name', cached.name || '');
+    localStorage.setItem('partners_last_offer_id', id);
     setTimeout(() => { _offerSwitching = false; }, 0);
     return;
   }
@@ -11921,15 +11926,15 @@ async function offerLoad(id, showMsg) {
   const sel = document.getElementById('offer-select');
   if (sel) sel.value = id;
   const offerName = data.name || '';
-  localStorage.setItem('ecoverage_last_offer_name', offerName);
-  localStorage.setItem('ecoverage_last_offer_id', id);
+  localStorage.setItem('partners_last_offer_name', offerName);
+  localStorage.setItem('partners_last_offer_id', id);
 
   const hasData = data.data && data.data.v;
   if (hasData) {
     data.data.header = data.data.header || {};
     if (!data.data.header.title) data.data.header.title = offerName;
-    localStorage.setItem('ecoverage_title', data.data.header.title || offerName);
-    localStorage.setItem('ecoverage_title_url', data.data.header.titleUrl || '');
+    localStorage.setItem('partners_title', data.data.header.title || offerName);
+    localStorage.setItem('partners_title_url', data.data.header.titleUrl || '');
     const prev = _restoring; _restoring = true;
     restoreData(data.data);
     _restoring = prev;
@@ -11963,8 +11968,8 @@ function clearPageData(title) {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   // Set title in DOM and localStorage
-  localStorage.setItem('ecoverage_title', title);
-  localStorage.setItem('ecoverage_title_url', '');
+  localStorage.setItem('partners_title', title);
+  localStorage.setItem('partners_title_url', '');
   updateOfferSlugPath(title);
   const h1 = document.getElementById('main-title');
   if (h1) { h1.dataset.text = title; h1.dataset.url = ''; h1.textContent = title; document.title = title; }
@@ -12030,7 +12035,7 @@ function offerSearchFilter(q) {
   results.innerHTML = filtered.map(o => {
     const active = o.id === _currentOfferId;
     const activeMeta = (active ? document.getElementById('meta-date')?.value : null) || '';
-    const cached = localStorage.getItem('ecoverage_offer_cache_' + o.id);
+    const cached = localStorage.getItem('partners_offer_cache_' + o.id);
     const metaDate = activeMeta || o.date || (cached ? JSON.parse(cached).data?.meta?.date : null) || o.data?.meta?.date || '';
     let date = '';
     if (metaDate) {
@@ -12132,7 +12137,7 @@ function offerRename() {
   if (!name || name === current) return;
   // Always update h1/title
   const h1 = document.getElementById('main-title');
-  if (h1) { h1.dataset.text = name; h1.textContent = name; document.title = name; localStorage.setItem('ecoverage_title', name); }
+  if (h1) { h1.dataset.text = name; h1.textContent = name; document.title = name; localStorage.setItem('partners_title', name); }
   offerRebuildSelect();
   const sb = sbGetClient();
   if (!sb || !_currentOfferId) { showToast('Renamed to "' + name + '"', 'success'); return; }
@@ -12190,8 +12195,8 @@ function offerRename() {
         setStatus('saved', '☁️ Saved · ' + t);
         // Update cache with exactly what was written to Supabase
         try {
-          const existingCache = JSON.parse(localStorage.getItem('ecoverage_offer_cache_' + _currentOfferId) || '{}');
-          localStorage.setItem('ecoverage_offer_cache_' + _currentOfferId, JSON.stringify({ ...existingCache, data: pageData, updated_at: savedAt }));
+          const existingCache = JSON.parse(localStorage.getItem('partners_offer_cache_' + _currentOfferId) || '{}');
+          localStorage.setItem('partners_offer_cache_' + _currentOfferId, JSON.stringify({ ...existingCache, data: pageData, updated_at: savedAt }));
         } catch(e) {}
       } catch(e) {
         console.warn('Supabase save failed, trying JSONBin backup:', e);
@@ -12213,7 +12218,7 @@ function offerRename() {
 /* ── Init ── */
 (async function sbInit() {
   // Show last known offer name instantly before Supabase loads
-  const lastName = localStorage.getItem('ecoverage_last_offer_name');
+  const lastName = localStorage.getItem('partners_last_offer_name');
   if (lastName) {
     const h1 = document.getElementById('main-title');
     if (h1 && !h1.textContent.trim()) {
@@ -12491,8 +12496,8 @@ document.addEventListener('click', function(e) {
   const loader = document.getElementById('liftiq-loader');
   const onRealSite = window.location.hostname.includes('github.io') ||
     window.location.hostname.includes('mkruchan');
-  const lastId = localStorage.getItem('ecoverage_last_offer_id');
-  const cached = lastId && localStorage.getItem('ecoverage_offer_cache_' + lastId);
+  const lastId = localStorage.getItem('partners_last_offer_id');
+  const cached = lastId && localStorage.getItem('partners_offer_cache_' + lastId);
   // Hide loader if we have cache (will show instantly, then check freshness in background)
   if (!onRealSite || cached) { loader.classList.add('hidden'); return; }
 
