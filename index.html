@@ -12959,16 +12959,20 @@ window.addEventListener('DOMContentLoaded', function() {
   #n8n-chat .chat-message-markdown tbody tr:hover,
   #n8n-chat .chat-message-markdown tbody tr:nth-child(even) { background: transparent !important; position: static; border: 0 !important; box-shadow: none !important; }
   #n8n-chat .chat-message-markdown th, #n8n-chat .chat-message-markdown td {
-    padding: 6px 10px !important; border: 0; border-bottom: 1px solid var(--border-light) !important;
+    padding: 6px 8px !important; border: 0; border-bottom: 1px solid var(--border-light) !important;
     vertical-align: top; overflow: visible !important; white-space: normal;
-    word-break: normal; overflow-wrap: normal; hyphens: none; min-width: 72px; max-width: 260px;
+    word-break: normal; overflow-wrap: break-word; hyphens: none;
     color: var(--text-primary); background: transparent !important;
   }
-  #n8n-chat .chat-message-markdown th {
-    position: static; text-align: left; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--text-secondary); white-space: nowrap; user-select: auto;
+  /* the page has `thead th { … !important }` (uppercase, nowrap, white background) — beat it inside the chat */
+  #n8n-chat .chat-message-markdown thead th, #n8n-chat .chat-message-markdown th {
+    position: static; text-align: left !important; font-size: 11.5px !important; font-weight: 600 !important;
+    letter-spacing: 0 !important; text-transform: none !important; color: var(--text-secondary) !important;
+    white-space: normal !important; user-select: auto; background: transparent !important;
   }
-  #n8n-chat .chat-message-markdown td:first-child, #n8n-chat .chat-message-markdown th:first-child { min-width: 0; padding-left: 0 !important; }
+  #n8n-chat .chat-message-markdown td:first-child, #n8n-chat .chat-message-markdown th:first-child { padding-left: 0 !important; }
+  #n8n-chat .chat-message-markdown td.ra-tight { width: 1%; white-space: nowrap !important; }
+  #n8n-chat .chat-message-markdown th.ra-tight { width: 1%; }   /* short columns (channel, format, numbers) */
   #n8n-chat .chat-message-markdown tbody tr:last-child td { border-bottom: 0 !important; }
   #n8n-chat .chat-message-markdown tbody tr:hover td { background: var(--accent-muted) !important; }
   #n8n-chat .chat-message-markdown a { color: var(--accent); }
@@ -13015,6 +13019,20 @@ window.addEventListener('DOMContentLoaded', function() {
     i18n: { en: { title: 'Research assistant', subtitle: 'Ask about ads, angles, funnels and offer stats', footer: '',
                   getStarted: 'New conversation', inputPlaceholder: 'Ask a question…' } },
   });
+
+  // Answer tables: keep short columns (e.g. "Meta", "Video", "170") tight so the long text column gets the room
+  const tightenTables = () => {
+    for (const t of document.querySelectorAll('#n8n-chat .chat-message-markdown table:not([data-ra])')) {
+      t.dataset.ra = '1';
+      const cols = Math.max(0, ...[...t.rows].map(r => r.cells.length));
+      for (let c = 0; c < cols; c++) {
+        const cells = [...t.rows].map(r => r.cells[c]).filter(Boolean);
+        const longest = Math.max(0, ...cells.slice(1).map(x => x.textContent.trim().length));
+        if (longest && longest <= 14) cells.forEach(x => x.classList.add('ra-tight'));
+      }
+    }
+  };
+  new MutationObserver(tightenTables).observe(document.body, { childList: true, subtree: true });
 </script>
 </body>
 </html>
