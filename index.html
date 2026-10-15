@@ -13034,10 +13034,19 @@ window.addEventListener('DOMContentLoaded', function() {
     body.sidebar-collapsed.sidebar-peek .ds-sidebar { width: var(--sidebar-w) !important; }
     body.sidebar-collapsed .ds-main { margin-left: 60px !important; width: calc(100% - 60px) !important; }
     body.sidebar-collapsed .offers-panel { left: 60px !important; }
-    body.sidebar-collapsed:not(.sidebar-peek) .ds-nav-item { gap: 40px !important; }          /* push labels out of the 60px strip */
-    body.sidebar-collapsed:not(.sidebar-peek) .ds-sidebar-logo { overflow: hidden; }
-    body.sidebar-collapsed:not(.sidebar-peek) .ds-sidebar-logo > svg:first-child { clip-path: inset(0 calc(100% - 26px) 0 0); }
-    body.sidebar-collapsed:not(.sidebar-peek) .appearance-chevron { display: none; }
+    /* rail: square 40px icon buttons centred in the 60px strip, labels hidden */
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-sidebar-nav { padding-left: 0 !important; padding-right: 0 !important; align-items: center !important; }
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-nav-item {
+      width: 40px !important; height: 40px !important; min-height: 40px; padding: 0 !important; margin: 0 auto !important;
+      justify-content: center !important; gap: 0 !important; font-size: 0 !important; flex-shrink: 0;
+    }
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-nav-item svg { margin: 0 !important; }
+    body.sidebar-collapsed:not(.sidebar-peek) #themeLabel { display: none !important; }
+    body.sidebar-collapsed:not(.sidebar-peek) .appearance-menu-wrap { display: flex; justify-content: center; }
+    /* logo: show just the mark, centred (mark ≈ 25px of the 110px wordmark) */
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-sidebar-logo { overflow: hidden; padding: 0 0 0 17px !important; justify-content: flex-start !important; }
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-sidebar-logo > svg:first-child { clip-path: inset(0 calc(100% - 26px) 0 0); flex-shrink: 0; }
+    body.sidebar-collapsed:not(.sidebar-peek) #themeToggle .appearance-chevron { display: none !important; }
     body.sidebar-collapsed:not(.sidebar-peek) #ds-sidebar { overflow-y: hidden; }
     .ds-peek-edge { display: none !important; }
     .ds-peek-pin { display: none; position: absolute; top: 21px; right: 12px; width: 30px; height: 30px; border: 0; border-radius: 8px;
