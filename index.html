@@ -13028,8 +13028,18 @@ window.addEventListener('DOMContentLoaded', function() {
   @media (min-width: 769px) and (hover: hover) {
     body.sidebar-collapsed.sidebar-peek .ds-sidebar { transform: translateX(0) !important; box-shadow: 8px 0 32px rgba(0,0,0,.18); }
     body.force-dark.sidebar-collapsed.sidebar-peek .ds-sidebar { box-shadow: 8px 0 32px rgba(0,0,0,.55); }
-    .ds-peek-edge { position: fixed; top: 0; bottom: 0; left: 0; width: 8px; z-index: 590; display: none; }
-    body.sidebar-collapsed .ds-peek-edge { display: block; }
+    /* Collapsed = icon rail (like Chrome's collapsed vertical tabs): the sidebar stays visible as a 60px strip of
+       icons; hovering it (or the header button) slides the full sidebar out over the page. */
+    body.sidebar-collapsed .ds-sidebar { transform: none !important; width: 60px !important; transition: width .2s cubic-bezier(.4,0,.2,1), box-shadow .2s !important; }
+    body.sidebar-collapsed.sidebar-peek .ds-sidebar { width: var(--sidebar-w) !important; }
+    body.sidebar-collapsed .ds-main { margin-left: 60px !important; width: calc(100% - 60px) !important; }
+    body.sidebar-collapsed .offers-panel { left: 60px !important; }
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-nav-item { gap: 40px !important; }          /* push labels out of the 60px strip */
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-sidebar-logo { overflow: hidden; }
+    body.sidebar-collapsed:not(.sidebar-peek) .ds-sidebar-logo > svg:first-child { clip-path: inset(0 calc(100% - 26px) 0 0); }
+    body.sidebar-collapsed:not(.sidebar-peek) .appearance-chevron { display: none; }
+    body.sidebar-collapsed:not(.sidebar-peek) #ds-sidebar { overflow-y: hidden; }
+    .ds-peek-edge { display: none !important; }
     .ds-peek-pin { display: none; position: absolute; top: 21px; right: 12px; width: 30px; height: 30px; border: 0; border-radius: 8px;
       background: transparent; color: var(--text-secondary); cursor: pointer; align-items: center; justify-content: center; }
     .ds-peek-pin:hover { background: var(--bg-tertiary); color: var(--text-primary); }
@@ -13082,12 +13092,19 @@ window.addEventListener('DOMContentLoaded', function() {
       btn.addEventListener('click', () => document.body.classList.remove('sidebar-peek'));   // click still pins/unpins as before
       edge.addEventListener('mouseenter', () => { clearTimeout(showTimer); showTimer = setTimeout(show, 120); });
       edge.addEventListener('mouseleave', () => hide());
-      sb.addEventListener('mouseenter', () => { if (document.body.classList.contains('sidebar-peek')) clearTimeout(hideTimer); });
+      sb.addEventListener('mouseenter', () => {
+        if (document.body.classList.contains('sidebar-peek')) { clearTimeout(hideTimer); return; }
+        clearTimeout(showTimer); showTimer = setTimeout(show, 140);
+      });
       sb.addEventListener('mouseleave', () => hide());
       sb.addEventListener('click', e => { if (e.target.closest('a, .ds-nav-item, [onclick]') && !e.target.closest('.ds-peek-pin, .ds-sidebar-logo')) hide(0); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(0); });
     }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    function titles() {
+      document.querySelectorAll('#ds-sidebar .ds-nav-item').forEach(b => { if (!b.title) b.title = b.textContent.replace(/\s+/g, ' ').trim(); });
+    }
+    const boot = () => { init(); titles(); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   })();
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@n8n/chat@1.41.1/dist/style.css">
