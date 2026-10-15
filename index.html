@@ -12904,10 +12904,77 @@ window.addEventListener('DOMContentLoaded', function() {
   // Grow each row of the traffic + funnels tables to fit its longest text (cells are absolutely positioned
   // textareas, so the table can't size itself). Cap at ~8 lines; longer cells get an inner scrollbar.
   (function () {
-    const IDS = ['traffic-table', 'funnels-table'];
+    const IDS = ['traffic-table', 'funnels-table'];  // rows auto-fit; widths fixed for these + ads-table
     const MIN = 52, MAX = 168;
+    // The saved layout gives each table a fixed width that can be larger than its visible columns
+    // (hidden columns still count), which shows a scrollbar with nothing to scroll to. Size the table to its
+    // visible columns; if that is narrower than the card, let the last visible column fill the gap.
+    // Width a column actually needs: its widest single-line content (text, badges, links) or its header label.
+    const ctx = document.createElement('canvas').getContext('2d');
+    function textW(str, el) {
+      const cs = getComputedStyle(el);
+      ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const ls = parseFloat(cs.letterSpacing) || 0;
+      const t = cs.textTransform === 'uppercase' ? str.toUpperCase() : str;
+      return Math.max(0, ...t.split('\n').map(line => ctx.measureText(line).width + ls * line.length));
+    }
+    function cellNeed(td) {
+      if (!td) return 0;
+      const cs = getComputedStyle(td), pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+      const ta = td.querySelector('textarea, input');
+      if (ta) {
+        const v = (ta.value || '').trim();
+        if (!v) return 0;
+        const tcs = getComputedStyle(ta);
+        return textW(v, ta) + (parseFloat(tcs.paddingLeft) || 0) + (parseFloat(tcs.paddingRight) || 0) + pad + 2;
+      }
+      // measure the visible leaves (badges, link pills, plain text), not their full-width wrappers
+      const left = td.getBoundingClientRect().left, padR = parseFloat(cs.paddingRight) || 0;
+      let w = 0;
+      for (const el of td.querySelectorAll('*')) {
+        if (el.children.length || /^(SELECT|OPTION|svg|path)$/i.test(el.tagName)) continue;
+        if (getComputedStyle(el).display === 'none' || !el.getClientRects().length) continue;
+        const r = el.getBoundingClientRect();
+        const pr = el.parentElement ? (parseFloat(getComputedStyle(el.parentElement).paddingRight) || 0) : 0;
+        // truncatable badges/pills are capped at `calc(100% - Npx)` — add that reserve so they never get cut
+        const ecs = getComputedStyle(el), m = /calc\(100% - ([\d.]+)px\)/.exec(ecs.maxWidth);
+        const reserve = m ? +m[1] : 0;
+        w = Math.max(w, (r.left - left) + Math.max(el.scrollWidth, r.width) + pr + padR + reserve);
+      }
+      if (!td.querySelector('*')) w = textW(td.textContent.trim(), td) + (parseFloat(cs.paddingLeft) || 0) + padR;
+      return w ? w + 2 : 0;
+    }
+    // The saved layout gives each table a fixed width that can be larger than its visible columns
+    // (hidden columns still count), which shows a scrollbar with nothing to scroll to. Shrink columns that are
+    // mostly empty space to their content, then let the last visible column fill the card.
+    function fitWidth(table) {
+      const box = table.closest('.table-scroll'); const head = table.tHead && table.tHead.rows[0];
+      if (!box || !head || !box.clientWidth) return;
+      const cols = [...head.cells].map((th, i) => ({ th, i })).filter(c => getComputedStyle(c.th).display !== 'none');
+      if (!cols.length) return;
+      for (const c of cols) if (!c.th.dataset.baseW) c.th.dataset.baseW = parseFloat(c.th.style.width) || c.th.getBoundingClientRect().width;
+      const rows = [...(table.tBodies[0]?.rows || [])];
+      let others = 0;
+      for (const c of cols.slice(0, -1)) {
+        const base = +c.th.dataset.baseW;
+        const hcs = getComputedStyle(c.th);
+        const headNeed = textW(c.th.textContent.trim(), c.th) + (parseFloat(hcs.paddingLeft) || 0) + (parseFloat(hcs.paddingRight) || 0) + 14;
+        const need = Math.max(headNeed, 36, ...rows.map(r => cellNeed(r.cells[c.i])));
+        const w = Math.round(Math.min(base, need));          // only ever shrink; long-text columns keep their width
+        c.th.style.width = w + 'px';
+        others += w;
+      }
+      const last = cols[cols.length - 1].th;
+      // some cells can't get as narrow as asked (buttons, pills) — use the widths the browser actually rendered
+      others = cols.slice(0, -1).reduce((a, c) => a + c.th.getBoundingClientRect().width, 0);
+      // fill the card; shrink the last column (down to 320px) before falling back to a real horizontal scroll
+      const lastW = Math.max(Math.min(+last.dataset.baseW, 320), box.clientWidth - others);
+      last.style.width = lastW + 'px';
+      table.style.width = Math.round(others + lastW) + 'px';
+    }
     function fit(table) {
       if (!table || !table.offsetWidth) return;              // hidden (grid view / other tab)
+      fitWidth(table);
       for (const tr of table.tBodies[0]?.rows || []) {
         const tas = [...tr.querySelectorAll('textarea')];
         tr.style.height = MIN + 'px';
@@ -12919,7 +12986,10 @@ window.addEventListener('DOMContentLoaded', function() {
         for (const ta of tas) { ta.classList.toggle('rt-scroll', ta.scrollHeight > h + 2); ta.scrollTop = 0; }
       }
     }
-    const fitAll = () => IDS.forEach(id => fit(document.getElementById(id)));
+    const fitAll = () => {
+      IDS.forEach(id => fit(document.getElementById(id)));
+      const ads = document.getElementById('ads-table'); if (ads && ads.offsetWidth) fitWidth(ads);
+    };
     window.fitTableRows = fitAll;
     // the page calls autoGrow() whenever it fills a cell; use that as the signal to refit
     if (typeof window.autoGrow === 'function') {
@@ -12936,10 +13006,10 @@ window.addEventListener('DOMContentLoaded', function() {
       }
     });
     function watch() {
-      IDS.forEach(id => {
+      [...IDS, 'ads-table'].forEach(id => {
         const t = document.getElementById(id);
         if (t && !t.dataset.rtWatch) {
-          t.dataset.rtWatch = '1'; ro.observe(t);
+          t.dataset.rtWatch = '1'; ro.observe(t); const box = t.closest('.table-scroll'); if (box) ro.observe(box);
           new MutationObserver(later).observe(t, { childList: true, subtree: true, characterData: true });
         }
       });
@@ -12948,6 +13018,74 @@ window.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', () => { watch(); later(); setTimeout(fitAll, 800); });
     document.addEventListener('input', e => { if (e.target.closest && e.target.closest('#traffic-table, #funnels-table')) later(); });
     if (document.fonts) document.fonts.ready.then(later);
+  })();
+</script>
+<style>
+  /* Collapsed sidebar "peek": hover the sidebar button (or the left edge) to slide the sidebar over the page,
+     like Chrome's collapsed tab strip; it hides again when the mouse leaves. The pin keeps it open. */
+  @media (min-width: 769px) and (hover: hover) {
+    body.sidebar-collapsed.sidebar-peek .ds-sidebar { transform: translateX(0) !important; box-shadow: 8px 0 32px rgba(0,0,0,.18); }
+    body.force-dark.sidebar-collapsed.sidebar-peek .ds-sidebar { box-shadow: 8px 0 32px rgba(0,0,0,.55); }
+    .ds-peek-edge { position: fixed; top: 0; bottom: 0; left: 0; width: 8px; z-index: 590; display: none; }
+    body.sidebar-collapsed .ds-peek-edge { display: block; }
+    .ds-peek-pin { display: none; position: absolute; top: 21px; right: 12px; width: 30px; height: 30px; border: 0; border-radius: 8px;
+      background: transparent; color: var(--text-secondary); cursor: pointer; align-items: center; justify-content: center; }
+    .ds-peek-pin:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    body.sidebar-collapsed.sidebar-peek .ds-peek-pin { display: flex; }
+    #ds-sidebar .ds-sidebar-logo .ds-peek-pin svg, #ds-sidebar .ds-sidebar-logo .ds-peek-pin svg * { fill: none !important; stroke: currentColor !important; }
+    #ds-sidebar .ds-sidebar-logo .ds-peek-pin svg { width: 15px !important; height: 15px !important; }
+    .ds-sidebar-logo { position: relative; }
+  }
+  @media (prefers-reduced-motion: reduce) { .ds-sidebar { transition: none !important; } }
+</style>
+<script>
+  (function () {
+    const desktop = () => matchMedia('(min-width: 769px) and (hover: hover)').matches;
+    let hideTimer, showTimer;
+    const collapsed = () => document.body.classList.contains('sidebar-collapsed');
+    const show = () => { clearTimeout(hideTimer); if (collapsed() && desktop()) document.body.classList.add('sidebar-peek'); };
+    // hide only if the pointer really is outside the sidebar/button/edge when the timer fires (the sidebar slides
+    // under a still cursor, so enter/leave events alone are unreliable mid-animation)
+    let px = -1, py = -1;
+    document.addEventListener('mousemove', e => { px = e.clientX; py = e.clientY; }, { passive: true });
+    const overPeekArea = () => {
+      if (px < 0) return false;
+      const el = document.elementFromPoint(px, py);
+      return !!el && !!el.closest('#ds-sidebar, #ds-hdr-collapse-btn, .ds-peek-edge');
+    };
+    const hide = (delay = 300) => {
+      clearTimeout(showTimer); clearTimeout(hideTimer);
+      hideTimer = setTimeout(function check() {
+        if (delay && overPeekArea()) { hideTimer = setTimeout(check, 250); return; }
+        document.body.classList.remove('sidebar-peek');
+      }, delay);
+    };
+    function init() {
+      const sb = document.getElementById('ds-sidebar'), btn = document.getElementById('ds-hdr-collapse-btn');
+      if (!sb || !btn || sb.dataset.peek) return;
+      sb.dataset.peek = '1';
+      const edge = document.createElement('div');
+      edge.className = 'ds-peek-edge'; edge.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(edge);
+      const logo = sb.querySelector('.ds-sidebar-logo');
+      if (logo) {
+        const pin = document.createElement('button');
+        pin.type = 'button'; pin.className = 'ds-peek-pin'; pin.title = 'Keep sidebar open';
+        pin.innerHTML = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M6 1v14"/></svg>';
+        pin.addEventListener('click', e => { e.stopPropagation(); document.body.classList.remove('sidebar-peek'); if (collapsed()) toggleSidebar(); });
+        logo.appendChild(pin);
+      }
+      btn.addEventListener('mouseenter', () => { clearTimeout(showTimer); showTimer = setTimeout(show, 90); });
+      btn.addEventListener('mouseleave', () => hide());
+      btn.addEventListener('click', () => document.body.classList.remove('sidebar-peek'));   // click still pins/unpins as before
+      edge.addEventListener('mouseenter', () => { clearTimeout(showTimer); showTimer = setTimeout(show, 120); });
+      edge.addEventListener('mouseleave', () => hide());
+      sb.addEventListener('mouseenter', () => { if (document.body.classList.contains('sidebar-peek')) clearTimeout(hideTimer); });
+      sb.addEventListener('mouseleave', () => hide());
+      sb.addEventListener('click', e => { if (e.target.closest('a, .ds-nav-item, [onclick]') && !e.target.closest('.ds-peek-pin, .ds-sidebar-logo')) hide(0); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(0); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
   })();
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@n8n/chat@1.41.1/dist/style.css">
