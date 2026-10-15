@@ -12894,6 +12894,62 @@ window.addEventListener('DOMContentLoaded', function() {
   window.cloudHistoryLoad = function() { return Promise.resolve(); };
 });
 </script>
+<style>
+  /* Traffic channels + funnels: rows grow to show the full text (see fitTableRows); very long cells scroll inside */
+  #traffic-table tbody td textarea.rt-scroll, #funnels-table tbody td textarea.rt-scroll { overflow-y: auto !important; overscroll-behavior: contain; scrollbar-width: thin; }
+  #traffic-table tbody td textarea.rt-scroll::-webkit-scrollbar, #funnels-table tbody td textarea.rt-scroll::-webkit-scrollbar { width: 5px; }
+  #traffic-table tbody td textarea.rt-scroll::-webkit-scrollbar-thumb, #funnels-table tbody td textarea.rt-scroll::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 99px; border: 0; }
+</style>
+<script>
+  // Grow each row of the traffic + funnels tables to fit its longest text (cells are absolutely positioned
+  // textareas, so the table can't size itself). Cap at ~8 lines; longer cells get an inner scrollbar.
+  (function () {
+    const IDS = ['traffic-table', 'funnels-table'];
+    const MIN = 52, MAX = 168;
+    function fit(table) {
+      if (!table || !table.offsetWidth) return;              // hidden (grid view / other tab)
+      for (const tr of table.tBodies[0]?.rows || []) {
+        const tas = [...tr.querySelectorAll('textarea')];
+        tr.style.height = MIN + 'px';
+        let need = MIN;
+        for (const ta of tas) need = Math.max(need, ta.scrollHeight + 1);
+        const h = Math.min(need, MAX);
+        tr.style.height = h + 'px';
+        for (const td of tr.cells) td.style.height = h + 'px';
+        for (const ta of tas) { ta.classList.toggle('rt-scroll', ta.scrollHeight > h + 2); ta.scrollTop = 0; }
+      }
+    }
+    const fitAll = () => IDS.forEach(id => fit(document.getElementById(id)));
+    window.fitTableRows = fitAll;
+    // the page calls autoGrow() whenever it fills a cell; use that as the signal to refit
+    if (typeof window.autoGrow === 'function') {
+      const orig = window.autoGrow;
+      window.autoGrow = function (el) { orig(el); if (el && el.closest && el.closest('#traffic-table, #funnels-table')) later(); };
+    }
+    let timer;
+    const later = () => { clearTimeout(timer); timer = setTimeout(fitAll, 60); };
+    const widths = new WeakMap();
+    const ro = new ResizeObserver(entries => {
+      for (const e of entries) {                              // refit only when the width changes (height changes are ours)
+        const w = Math.round(e.contentRect.width);
+        if (widths.get(e.target) !== w) { widths.set(e.target, w); later(); }
+      }
+    });
+    function watch() {
+      IDS.forEach(id => {
+        const t = document.getElementById(id);
+        if (t && !t.dataset.rtWatch) {
+          t.dataset.rtWatch = '1'; ro.observe(t);
+          new MutationObserver(later).observe(t, { childList: true, subtree: true, characterData: true });
+        }
+      });
+    }
+    document.addEventListener('DOMContentLoaded', () => { watch(); later(); });
+    window.addEventListener('load', () => { watch(); later(); setTimeout(fitAll, 800); });
+    document.addEventListener('input', e => { if (e.target.closest && e.target.closest('#traffic-table, #funnels-table')) later(); });
+    if (document.fonts) document.fonts.ready.then(later);
+  })();
+</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@n8n/chat@1.41.1/dist/style.css">
 <style>
   /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
