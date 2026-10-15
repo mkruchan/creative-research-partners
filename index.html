@@ -49,10 +49,6 @@
     .mx-tag { font-size: 12px; font-weight: 500; border-radius: 999px; padding: 3px 10px; background: var(--bg-tertiary); color: var(--text-secondary); }
     .mx-tag--amber { background: var(--amber-bg); color: var(--amber-text); }
     .mx-tag--purple { background: var(--purple-bg); color: var(--purple-text); }
-    .mx-payout { display: flex; align-items: baseline; gap: 8px; padding: 10px 12px; border-radius: 10px; background: var(--teal-bg); color: var(--teal-text); }
-    .mx-payout-label { font-size: 13px; font-weight: 500; }
-    .mx-payout-value { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-    .mx-payout-unit { font-size: 13px; font-weight: 500; opacity: .85; }
     .mx-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .mx-stat { padding: 10px 12px; border-radius: 10px; background: var(--bg-tertiary); }
     .mx-stat-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
@@ -66,7 +62,7 @@
     /* Typography */
     body { font-feature-settings: 'tnum' 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
     h1#main-title, .ds-top-header-title, .mx-title, .ins-title { letter-spacing: -0.02em !important; }
-    .mx-stat-value, .mx-payout-value, .mx-period-dates, td { font-variant-numeric: tabular-nums; }
+    .mx-stat-value, .mx-period-dates, td { font-variant-numeric: tabular-nums; }
 
     /* What's working / What to do */
     #ic-grid-notes { display: none !important; }
@@ -9212,13 +9208,11 @@ async function renderEfOffers(data) {
   const vis = { private: ['Private · ask your account manager', 'mx-tag--purple'], require_approval: ['Approval required', 'mx-tag--amber'], public: ['Open to all partners', ''] };
   const fmt = n => Number(n).toLocaleString('en-US');
   grid.innerHTML = offers.map(o => {
-    const m = /^(\S+)\s+(.*)$/.exec(o.payoutLabel || '');
     const stat = (label, v) => `<div class="mx-stat"><div class="mx-stat-label">${label}</div><div class="mx-stat-value">${v}</div></div>`;
     const v = vis[o.visibility];
     return `<article class="mx-card">
       <div class="mx-card-top"><div class="mx-name">${_efEsc(o.name || ('Offer ' + o.id))}</div><div class="mx-id">ID ${_efEsc(o.id)}</div></div>
       ${(v || (o.status && o.status !== 'active')) ? `<div class="mx-tags">${v ? `<span class="mx-tag ${v[1]}">${v[0]}</span>` : ''}${o.status && o.status !== 'active' ? `<span class="mx-tag">${_efEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : ''}</div>` : ''}
-      ${o.payoutLabel ? `<div class="mx-payout"><span class="mx-payout-label">Payout</span><span class="mx-payout-value">${_efEsc(m ? m[1] : o.payoutLabel)}</span>${m ? `<span class="mx-payout-unit">${_efEsc(m[2])}</span>` : ''}</div>` : ''}
       <div class="mx-stats">
         ${stat('Clicks', fmt(o.clicks))}
         ${stat('Conversions', fmt(o.conversions))}
