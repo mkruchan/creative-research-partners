@@ -12935,6 +12935,7 @@ window.addEventListener('DOMContentLoaded', function() {
     background: var(--accent-muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z'/%3E%3Cpath d='M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z'/%3E%3C/svg%3E") center / 20px no-repeat;
   }
   #n8n-chat .chat-header h1 { margin: 0; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+  #n8n-chat .chat-header h1::after { content: "AI"; font-size: 9.5px; font-weight: 700; letter-spacing: .05em; line-height: 1; padding: 3px 5px; border-radius: 5px; background: var(--blue-bg); color: var(--blue-text); }
   #n8n-chat .chat-header p { margin: 0; color: var(--text-secondary); }
   #n8n-chat .chat-header .chat-close-button { color: var(--text-secondary); }
   #n8n-chat .chat-message { box-shadow: var(--shadow-xs); max-width: 88%; }
