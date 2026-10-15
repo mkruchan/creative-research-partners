@@ -13063,7 +13063,7 @@ window.addEventListener('DOMContentLoaded', function() {
     const overPeekArea = () => {
       if (px < 0) return false;
       const el = document.elementFromPoint(px, py);
-      return !!el && !!el.closest('#ds-sidebar, #ds-hdr-collapse-btn, .ds-peek-edge');
+      return !!el && !!el.closest('#ds-sidebar');
     };
     const hide = (delay = 300) => {
       clearTimeout(showTimer); clearTimeout(hideTimer);
@@ -13087,8 +13087,7 @@ window.addEventListener('DOMContentLoaded', function() {
         pin.addEventListener('click', e => { e.stopPropagation(); document.body.classList.remove('sidebar-peek'); if (collapsed()) toggleSidebar(); });
         logo.appendChild(pin);
       }
-      btn.addEventListener('mouseenter', () => { clearTimeout(showTimer); showTimer = setTimeout(show, 90); });
-      btn.addEventListener('mouseleave', () => hide());
+      // the header button only toggles on click; hovering it does nothing (the icon rail itself opens on hover)
       btn.addEventListener('click', () => document.body.classList.remove('sidebar-peek'));   // click still pins/unpins as before
       edge.addEventListener('mouseenter', () => { clearTimeout(showTimer); showTimer = setTimeout(show, 120); });
       edge.addEventListener('mouseleave', () => hide());
