@@ -4,6 +4,37 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; font-src 'self' data:; connect-src 'self' https://mykytak.app.n8n.cloud; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+<script>
+  // Creatives backup: when a Cloudinary image or video fails to load (account over quota, outage, deleted asset),
+  // load the copy from mkruchan/creative-research-media (build/mirror_media.py) instead. Listens in the capture
+  // phase so it catches every <img>/<video>/<source> on the page, including ones added later.
+  (function () {
+    const BASE = '/creative-research-media/m/';
+    const CLOUD = /^https:\/\/res\.cloudinary\.com\/duvwxhj6k\/(image|video)\/upload\/(.+)$/;
+    // Must match mirror_path() in build/mirror_media.py
+    function mediaFallbackPath(url) {
+      const m = CLOUD.exec(url.split(/[?#]/)[0]);
+      if (!m) return null;
+      const parts = m[2].split('/');
+      while (parts.length && (/^v\d+$/.test(parts[0]) || parts[0].includes(',') || /^[a-z]{1,3}_[^/]+$/.test(parts[0]))) parts.shift();
+      if (!parts.length) return null;
+      let p = parts.join('/'), dot = p.lastIndexOf('.'), stem = dot > 0 ? p.slice(0, dot) : p, ext = dot > 0 ? p.slice(dot + 1).toLowerCase() : '';
+      if (m[1] === 'video') ext = 'mp4';
+      else if (!ext || ext === 'heic' || ext === 'heif') ext = 'jpg';
+      return stem + '.' + ext;
+    }
+    window.mediaFallbackPath = mediaFallbackPath;
+    document.addEventListener('error', e => {
+      const el = e.target;
+      if (!el || !/^(IMG|VIDEO|SOURCE)$/.test(el.tagName) || el.dataset.mediaFallback) return;
+      const p = mediaFallbackPath(el.getAttribute('src') || '');
+      if (!p) return;
+      el.dataset.mediaFallback = '1';
+      el.src = BASE + p;
+      if (el.tagName === 'SOURCE' && el.parentElement) el.parentElement.load();
+    }, true);
+  })();
+</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Creative Research for Partners</title>
 <script>
