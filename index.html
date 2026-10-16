@@ -96,6 +96,27 @@
     }
   </style>
 
+  <script>
+    // Report values end up in HTML built from template strings. These keep them as plain text / safe links:
+    //  _esc      text or attribute value (the browser decodes it back, so editing reads the same text)
+    //  _safeHref link target: a scheme other than http(s) (javascript:, data:, vbscript: …) becomes no link
+    //  _safeSrc  media source: like _safeHref, plus data:image|video and blob: (pasted / uploaded creatives)
+    // Media opens the lightbox from a data-lightbox attribute (listener below), never from data inside inline JS.
+    function _esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+    function _safeHref(u) {
+      const s = String(u == null ? '' : u).trim();
+      const bare = s.replace(/[\u0000-\u0020\u007f]+/g, '');
+      return /^[a-z][a-z0-9+.\-]*:/i.test(bare) && !/^https?:/i.test(bare) ? '' : s;
+    }
+    function _safeSrc(u) {
+      const s = String(u == null ? '' : u).trim();
+      return /^(data:(image|video)\/|blob:)/i.test(s.replace(/[\u0000-\u0020\u007f]+/g, '')) ? s : _safeHref(s);
+    }
+    document.addEventListener('click', e => {
+      const el = e.target && e.target.closest && e.target.closest('[data-lightbox]');
+      if (el && typeof openLightbox === 'function') openLightbox(el.dataset.lightbox);
+    }, true);
+  </script>
   <!-- BUILD MARKER: 2026-09-01T14:25:38Z — search this exact string to confirm this deployed copy is current -->
   <script>console.log("%c[Build] Deployed file build marker: 2026-09-01T14:25:38Z", "color:#3b82f6;font-weight:bold");</script>
   <script>
@@ -7369,7 +7390,7 @@ function editTitle() {
     newH1.id = 'main-title';
     newH1.style.cssText = '';
     newH1.dataset.text = newText; newH1.dataset.url = newUrl;
-    if (newUrl) {
+    if (_safeHref(newUrl)) {
       const a = document.createElement('a');
       a.href = newUrl; a.target = '_blank'; a.rel = 'noopener';
       a.textContent = newText; a.style.cssText = 'color:inherit;text-decoration:none;';
@@ -7511,11 +7532,11 @@ function buildTrafficGrid() {
     };
     const clr = CHIP_COLORS[val] || {bg:'#E5E7EB',color:'#374151'};
     const chipHtml = hasVal
-      ? `<span class="gc-chip" style="--chip-bg:${clr.bg};--chip-c:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${text}</span>`
+      ? `<span class="gc-chip" style="--chip-bg:${clr.bg};--chip-c:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${_esc(text)}</span>`
       : `<span style="opacity:0.4;font-size:10px;">— none —</span>`;
     const tdIdx = Array.from(td.parentElement.children).indexOf(td) + 1;
     const opts = Array.from(sel.options).map(o =>
-      `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`
+      `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`
     ).join('');
     return `<div class="card-chip-field" style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
@@ -7535,14 +7556,14 @@ function buildTrafficGrid() {
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
-    >${val||''}</div>
+    >${_esc(val||'')}</div>
   </div>`;
   const simpleField = (label, val, selector, rowIdx, tableId) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
     <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
-    >${val||''}</div>
+    >${_esc(val||'')}</div>
   </div>`;
 
   // cols: 0=#, 1=source, 2=geo, 3=qty, 4=type, 5=notes
@@ -7584,20 +7605,20 @@ function buildFunnelsGrid() {
 
   const getText = td => td?.querySelector('textarea')?.value || '';
   const getLinkHref = td => { const a = td?.querySelector('a.link-chip'); const h = a?.href||''; return (h && h.startsWith('http')) ? h : ''; };
-  const mkLink = (url, label) => url ? `<a href="${url}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:10px;display:flex;align-items:center;gap:3px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>${label}</a>` : '';
+  const mkLink = (url, label) => url ? `<a href="${_esc(_safeHref(url))}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:10px;display:flex;align-items:center;gap:3px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>${label}</a>` : '';
   const gfField = (label, val, selector, rowIdx, tableId) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
     <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
-    >${val||''}</div>
+    >${_esc(val||'')}</div>
   </div>`;
   const simpleField = (label, val, selector, rowIdx, tableId) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
     <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
-    >${val||''}</div>
+    >${_esc(val||'')}</div>
   </div>`;
 
   const cards = Array.from(rows).map((tr, idx) => {
@@ -7614,7 +7635,7 @@ function buildFunnelsGrid() {
     const efv = efSel?.value || '';
     const efc = efv === 'ef-yes' ? {bg:'#DCFCE7',color:'#166534'} : {bg:'#FEE2E2',color:'#B91C1C'};
     const efChipHtml = efv ? `<span class="gc-chip" style="--chip-bg:${efc.bg};--chip-c:${efc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${efv === 'ef-yes' ? 'Yes' : 'No'}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
-    const efOpts = efSel ? Array.from(efSel.options).map(o => `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`).join('') : '';
+    const efOpts = efSel ? Array.from(efSel.options).map(o => `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`).join('') : '';
     const efChip = efSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">In Everflow?</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
@@ -7631,18 +7652,18 @@ function buildFunnelsGrid() {
       'multi-step':{'bg':'#FEF3C7','color':'#92400E'},'advertorial':{'bg':'#FCE7F3','color':'#9D174D'},
       'comparison':{'bg':'#F0F9FF','color':'#0C4A6E'},'checkout-page':{'bg':'#FFF7ED','color':'#C2410C'},
     };
-    const funnelOpts = funnelSel ? Array.from(funnelSel.options).map(o => `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`).join('') : '';
+    const funnelOpts = funnelSel ? Array.from(funnelSel.options).map(o => `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`).join('') : '';
     const fv = funnelSel?.value || '';
     const ft = fv ? (funnelSel.options[funnelSel.selectedIndex]?.text || fv) : '';
     const fc = FUNNEL_CHIP_COLORS[fv] || {bg:'#E5E7EB',color:'#374151'};
-    const funnelChipHtml = fv ? `<span class="gc-chip" style="--chip-bg:${fc.bg};--chip-c:${fc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${ft}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
+    const funnelChipHtml = fv ? `<span class="gc-chip" style="--chip-bg:${fc.bg};--chip-c:${fc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${_esc(ft)}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
     // Source chip
     const SOURCE_CHIP_COLORS = {'meta':{'bg':'#DBEAFE','color':'#1D4ED8'},'tiktok':{'bg':'#F3F4F6','color':'#111827'},'google':{'bg':'#dcfce7','color':'#166534'},'native':{'bg':'#D1FAE5','color':'#065F46'},'youtube':{'bg':'#FEE2E2','color':'#B91C1C'},'taboola':{'bg':'#FEF3C7','color':'#92400E'},'outbrain':{'bg':'#EDE9FE','color':'#6D28D9'},'mgid':{'bg':'#DBEAFE','color':'#00206A'},'revcontent':{'bg':'#D1FAE5','color':'#065F46'},'facebook':{'bg':'#DBEAFE','color':'#1D4ED8'},'push':{'bg':'#EDE9FE','color':'#6D28D9'}};
-    const sourceOpts = sourceSel ? Array.from(sourceSel.options).map(o => `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`).join('') : '';
+    const sourceOpts = sourceSel ? Array.from(sourceSel.options).map(o => `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`).join('') : '';
     const sv = sourceSel?.value || '';
     const st = sv ? (sourceSel.options[sourceSel.selectedIndex]?.text || sv) : '';
     const sc = SOURCE_CHIP_COLORS[sv] || {bg:'#E5E7EB',color:'#374151'};
-    const sourceChipHtml = sv ? `<span class="gc-chip" style="--chip-bg:${sc.bg};--chip-c:${sc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${st}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
+    const sourceChipHtml = sv ? `<span class="gc-chip" style="--chip-bg:${sc.bg};--chip-c:${sc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${_esc(st)}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
     const sourceChip = sourceSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Traffic source</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
@@ -7670,17 +7691,17 @@ function buildFunnelsGrid() {
           <span style="font-size:10px;color:#fff;background:rgba(0,0,0,0.55);border-radius:6px;padding:2px 5px;font-weight:500;">#${idx+1}</span>
           
         </div>
-        <div class="grid-card-offer">${advertiser || '<span style="opacity:0.4">No advertiser</span>'}</div>
+        <div class="grid-card-offer">${advertiser ? _esc(advertiser) : '<span style="opacity:0.4">No advertiser</span>'}</div>
         ${sourceChip}
         ${typeChip}
         ${efChip}
         ${gfField('Offer ID', efId, 'td:nth-child(6)', idx, 'funnels-body')}
-        ${efLink ? `<div style="padding:4px 0 8px;" onclick="event.stopPropagation()"><a class="ef-open" href="${efLink}" target="_blank" rel="noopener">Open offer in Everflow ↗</a></div>` : ''}
+        ${efLink ? `<div style="padding:4px 0 8px;" onclick="event.stopPropagation()"><a class="ef-open" href="${_esc(_safeHref(efLink))}" target="_blank" rel="noopener">Open offer in Everflow ↗</a></div>` : ''}
         ${gfField('Geo', geo, 'td:nth-child(7)', idx, 'funnels-body')}
         ${gfField('Notes', obs, 'td:nth-child(10)', idx, 'funnels-body')}
         <div style="padding-top:6px;border-top:1px solid var(--border-light);margin-top:4px;display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation()">
           ${linkUrl
-            ? `<a href="${linkUrl}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:3px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>Funnel link</a>`
+            ? `<a href="${_esc(_safeHref(linkUrl))}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:3px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>Funnel link</a>`
             : `<span style="font-size:12px;color:var(--text-secondary);opacity:0.5;flex:1;">Funnel link</span>`
           }
         </div>
@@ -7701,13 +7722,13 @@ function buildAdsGrid() {
   setTimeout(() => {
 
   const mkLink = (url, label) => url && url !== '#' && !url.endsWith('#')
-    ? `<a href="${url}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:10px;display:flex;align-items:center;gap:3px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>${label}</a>` : '';
+    ? `<a href="${_esc(_safeHref(url))}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:10px;display:flex;align-items:center;gap:3px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>${label}</a>` : '';
   const field = (label, val, taSelector, rowIdx, h=52) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
     <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${taSelector}" data-row="${rowIdx}" data-table="ads-body"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;min-width:20px;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
-    >${val||''}</div>
+    >${_esc(val||'')}</div>
   </div>`;
 
   const getLinkHref = td => { const a = td?.querySelector('a.link-chip'); const h = a?.href || ''; return (h && h !== '#' && !h.endsWith('#') && h !== location.href && !h.endsWith(location.pathname) && h.startsWith('http')) ? h : ''; };
@@ -7760,11 +7781,11 @@ function buildAdsGrid() {
     };
     const clr = CHIP_COLORS[val] || {bg:'#E5E7EB',color:'#374151'};
     const chipHtml = hasVal
-      ? `<span class="gc-chip" style="--chip-bg:${clr.bg};--chip-c:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${text}</span>`
+      ? `<span class="gc-chip" style="--chip-bg:${clr.bg};--chip-c:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${_esc(text)}</span>`
       : `<span style="opacity:0.4;font-size:10px;">— none —</span>`;
     const tdIdx = Array.from(td.parentElement.children).indexOf(td) + 1;
     const opts = Array.from(sel.options).map(o =>
-      `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`
+      `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`
     ).join('');
     return `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
@@ -7789,7 +7810,7 @@ function buildAdsGrid() {
     const spyUrl   = getLinkHref(tds[8]);
     const thumbImg = tr.querySelector('img.media-thumb, video.media-thumb');
     const thumbSrc = thumbImg ? (thumbImg.src || thumbImg.getAttribute('src') || thumbImg.currentSrc || '') : '';
-    const thumbUrl = thumbImg ? (thumbImg.getAttribute('onclick')?.match(/openLightbox\('([^']+)'\)/)?.[1] || thumbSrc) : '';
+    const thumbUrl = thumbImg ? (thumbImg.dataset.lightbox || thumbSrc) : '';
     const angle    = getText(tds[10]);
     const headline = getText(tds[11]);
     const cta      = getText(tds[12]);
@@ -7801,8 +7822,8 @@ function buildAdsGrid() {
     const mediaSrc = thumbUrl || thumbSrc;
     const imgHtml = mediaSrc
       ? (isVideoSrc
-          ? `<video class="grid-card-img" src="${mediaSrc}" onclick="event.stopPropagation();openLightbox('${mediaSrc}')" title="View" style="cursor:pointer;object-fit:cover;width:100%;height:100%;" muted playsinline preload="metadata" controls></video>`
-          : `<img class="grid-card-img" src="${mediaSrc}" onclick="event.stopPropagation();openLightbox('${mediaSrc}')" title="View" style="cursor:pointer;">`)
+          ? `<video class="grid-card-img" src="${_esc(_safeSrc(mediaSrc))}" onclick="event.stopPropagation()" data-lightbox="${_esc(mediaSrc)}" title="View" style="cursor:pointer;object-fit:cover;width:100%;height:100%;" muted playsinline preload="metadata" controls></video>`
+          : `<img class="grid-card-img" src="${_esc(_safeSrc(mediaSrc))}" onclick="event.stopPropagation()" data-lightbox="${_esc(mediaSrc)}" title="View" style="cursor:pointer;">`)
       : `<div class="grid-card-img-empty" style="cursor:default;">
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-secondary);">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
@@ -7812,15 +7833,15 @@ function buildAdsGrid() {
         </div>`;
 
     const mkEditableLink = (url, label, tdIdx) => {
-      const hasUrl = url && url.startsWith('http');
+      const hasUrl = url && /^https?:\/\//i.test(url);
       return `<div class="card-link-field" data-tdidx="${tdIdx}" style="display:flex;flex-direction:column;gap:2px;min-width:0;" onclick="event.stopPropagation()">
         <span class="card-link-display" style="display:flex;align-items:center;gap:3px;min-width:0;">
           ${hasUrl
-            ? `<a href="${url}" target="_blank" rel="noopener" class="card-link-anchor" style="color:var(--accent,#2563eb);text-decoration:none;font-size:11.75px;display:flex;align-items:center;gap:2px;white-space:nowrap;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>${label}</a>`
+            ? `<a href="${_esc(_safeHref(url))}" target="_blank" rel="noopener" class="card-link-anchor" style="color:var(--accent,#2563eb);text-decoration:none;font-size:11.75px;display:flex;align-items:center;gap:2px;white-space:nowrap;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>${label}</a>`
             : `<span style="font-size:11.75px;color:var(--text-secondary);opacity:0.4;">${label}</span>`
           }
         </span>
-        <input class="card-link-input" type="url" placeholder="${label} URL…" value="${url||''}"
+        <input class="card-link-input" type="url" placeholder="${label} URL…" value="${_esc(url||'')}"
           data-tdidx="${tdIdx}" data-row="${idx}" data-table="ads-body"
           style="display:none;height:0;padding:0;margin:0;border:none;font-size:11px;font-family:inherit;border-radius:4px;background:var(--bg-primary);color:var(--text-primary);outline:none;width:100%;box-sizing:border-box;"
           onkeydown="if(event.key==='Enter'||event.key==='Escape'){this.blur();}"
@@ -7859,7 +7880,7 @@ function buildAdsGrid() {
         </div>
       </div>
       <div class="grid-card-body">
-        <div class="grid-card-offer gce" contenteditable="false" spellcheck="false" data-ta="td:nth-child(2)" data-row="${idx}" data-table="ads-body" style="outline:none;" onclick="gcExpand(this)">${offer || ''}<span style="opacity:0.4;display:${offer?'none':'inline'}">Offer name</span></div>
+        <div class="grid-card-offer gce" contenteditable="false" spellcheck="false" data-ta="td:nth-child(2)" data-row="${idx}" data-table="ads-body" style="outline:none;" onclick="gcExpand(this)">${_esc(offer || '')}<span style="opacity:0.4;display:${offer?'none':'inline'}">Offer name</span></div>
         ${linkBlockTop}
         ${renderChip(tds[2], 'Traffic source', idx, 'ads-body')}
         ${renderChip(tds[3], 'Format', idx, 'ads-body')}
@@ -7955,12 +7976,12 @@ async function gridUploadMedia(input, rowIdx) {
     const pd = document.getElementById(previewId);
     if (pd) {
       const mediaTag = isVideo
-        ? `<video class="media-thumb" src="${url}" onclick="openLightbox('${url}')" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
-        : `<img class="media-thumb" src="${url}" onclick="openLightbox('${url}')" style="cursor:pointer" title="View">`;
+        ? `<video class="media-thumb" src="${_esc(_safeSrc(url))}" data-lightbox="${_esc(url)}" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
+        : `<img class="media-thumb" src="${_esc(_safeSrc(url))}" data-lightbox="${_esc(url)}" style="cursor:pointer" title="View">`;
       pd.innerHTML = `<div class="media-preview">
         ${mediaTag}
         <button class="media-remove" onclick="removeMedia('${uid}','${previewId}')">×</button>
-      </div><input type="hidden" class="cloudinary-url" value="${url}">`;
+      </div><input type="hidden" class="cloudinary-url" value="${_esc(url)}">`;
     }
     scheduleSave();
     buildAdsGrid();
@@ -7976,12 +7997,12 @@ async function gridUploadMedia(input, rowIdx) {
         if (sbErr) throw sbErr;
         const { data: { publicUrl } } = sb.storage.from('creatives').getPublicUrl(path);
         const sbMediaTag = isVideo
-          ? `<video class="media-thumb" src="${publicUrl}" onclick="openLightbox('${publicUrl}')" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
-          : `<img class="media-thumb" src="${publicUrl}" onclick="openLightbox('${publicUrl}')" style="cursor:pointer" title="View">`;
+          ? `<video class="media-thumb" src="${_esc(_safeSrc(publicUrl))}" data-lightbox="${_esc(publicUrl)}" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
+          : `<img class="media-thumb" src="${_esc(_safeSrc(publicUrl))}" data-lightbox="${_esc(publicUrl)}" style="cursor:pointer" title="View">`;
         pd.innerHTML = `<div class="media-preview">
           ${sbMediaTag}
           <button class="media-remove" onclick="removeMedia('${uid}','${previewId}')">×</button>
-        </div><input type="hidden" class="cloudinary-url" value="${publicUrl}">`;
+        </div><input type="hidden" class="cloudinary-url" value="${_esc(publicUrl)}">`;
         scheduleSave();
         buildAdsGrid();
         showToast('Uploaded via backup storage!', 'success');
@@ -8209,10 +8230,10 @@ function gridEditLink(btn, rowIdx, tableId, tdIdx) {
 
   // Replace wrap content with inline input
   const label = wrap.querySelector('a, span')?.textContent?.trim() || 'URL';
-  wrap.innerHTML = `<input type="url" value="${currentUrl}" placeholder="https://..." autocomplete="off"
+  wrap.innerHTML = `<input type="url" value="${_esc(currentUrl)}" placeholder="https://..." autocomplete="off" data-label="${_esc(label)}"
     style="flex:1;font-size:10px;padding:2px 4px;background:var(--bg-primary);border:1px solid var(--accent,#4A90D9);border-radius:4px;color:var(--text-primary);outline:none;width:100%;"
-    onkeydown="if(event.key==='Enter'){event.preventDefault();gridSaveLink(this,${rowIdx},'${tableId}',${tdIdx},'${label}')}if(event.key==='Escape'){rebuildGridForTable('${tableId}')}"
-    onblur="gridSaveLink(this,${rowIdx},'${tableId}',${tdIdx},'${label}')"
+    onkeydown="if(event.key==='Enter'){event.preventDefault();gridSaveLink(this,${rowIdx},'${tableId}',${tdIdx},this.dataset.label)}if(event.key==='Escape'){rebuildGridForTable('${tableId}')}"
+    onblur="gridSaveLink(this,${rowIdx},'${tableId}',${tdIdx},this.dataset.label)"
   >`;
   const input = wrap.querySelector('input');
   input.focus(); input.select();
@@ -8235,12 +8256,12 @@ function syncLinkCell(td, url) {
   const empty = td.querySelector('.link-chip-empty, .link-add-btn');
   const chipText = td.querySelector('.link-chip-text');
   if (url && a) {
-    a.href = url;
+    _setChipHref(a, url);
     if (chipText) chipText.textContent = url.replace(/^https?:\/\//, '').slice(0, 30);
     a.style.display = '';
     if (empty) empty.style.display = 'none';
   } else if (a) {
-    a.href = '#';
+    _setChipHref(a, '#');
     a.style.display = 'none';
     if (empty) empty.style.display = '';
   }
@@ -8367,6 +8388,7 @@ function resetRowHeight(input) {
 }
 
 function openLightbox(src) {
+  src = _safeSrc(src); if (!src) return;
   const isVideo = /\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(src) || src.includes('video/upload') || src.includes('so_0');
   const img = document.getElementById('lightbox-img');
   const vid = document.getElementById('lightbox-video');
@@ -8455,7 +8477,7 @@ function _adpChip(val, colorMap) {
   if (!val) return '';
   const key = val.toLowerCase().replace(/\s+/g,'-');
   const c = colorMap[key] || {bg:'#E5E7EB',color:'#374151'};
-  return `<span class="adp-badge-pill gc-chip" style="--chip-bg:${c.bg};--chip-c:${c.color};">${val}</span>`;
+  return `<span class="adp-badge-pill gc-chip" style="--chip-bg:${c.bg};--chip-c:${c.color};">${_esc(val)}</span>`;
 }
 
 /* ── Tab navigation ── */
@@ -8486,18 +8508,18 @@ function _adpDetailRow(label, valHtml) {
   return `<div class="adp-row"><div class="adp-row-label">${label}</div><div class="adp-row-val">${valHtml}</div></div>`;
 }
 function _adpEditRow(label, val, tdIdx) {
-  const display = val || '<span style="opacity:0.35;">—</span>';
+  const display = val ? _esc(val) : '<span style="opacity:0.35;">—</span>';
   return `<div class="adp-row">
     <div class="adp-row-label">${label}</div>
     <div class="adp-row-val adp-row-edit-wrap" style="flex:1;min-width:0;">
       <span class="adp-row-display-val">${display}</span>
-      <input class="adp-row-input" type="text" data-td="${tdIdx}" value="${(val||'').replace(/"/g,'&quot;')}" disabled style="display:none;width:100%;">
+      <input class="adp-row-input" type="text" data-td="${tdIdx}" value="${_esc(val||'')}" disabled style="display:none;width:100%;">
     </div>
   </div>`;
 }
 function _adpSelectRow(label, currentVal, options, tdIdx, colorMap) {
   const opts = options.map(([v,t]) =>
-    `<option value="${v}"${currentVal===v?' selected':''}>${t}</option>`
+    `<option value="${_esc(v)}"${currentVal===v?' selected':''}>${_esc(t)}</option>`
   ).join('');
   const displayText = (options.find(([v]) => v === currentVal) || [])[1] || '';
   const hasVal = displayText && !displayText.includes('select');
@@ -8505,7 +8527,7 @@ function _adpSelectRow(label, currentVal, options, tdIdx, colorMap) {
   if (hasVal && colorMap) {
     displayHtml = _adpChip(displayText, colorMap);
   } else if (hasVal) {
-    displayHtml = displayText;
+    displayHtml = _esc(displayText);
   } else {
     displayHtml = '<span style="opacity:0.35;">—</span>';
   }
@@ -8532,13 +8554,13 @@ function _adpLpRow(url, label, icon, bg, _color, tdIdx) {
     <div class="adp-lp-info">
       <div class="adp-lp-type">${label}</div>
       ${url
-        ? `<a class="adp-lp-url" href="${url}" target="_blank" rel="noopener">
+        ? `<a class="adp-lp-url" href="${_esc(_safeHref(url))}" target="_blank" rel="noopener">
              <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-             <span class="adp-lp-url-text">${short}</span>
+             <span class="adp-lp-url-text">${_esc(short)}</span>
            </a>`
         : `<span class="adp-lp-empty">No URL added</span>`
       }
-      <input class="adp-lp-edit-input" data-td="${tdIdx}" placeholder="Paste URL…" value="${url||''}" style="display:none;margin-top:4px;width:100%;">
+      <input class="adp-lp-edit-input" data-td="${tdIdx}" placeholder="Paste URL…" value="${_esc(url||'')}" style="display:none;margin-top:4px;width:100%;">
     </div>
   </div>`;
 }
@@ -8593,7 +8615,7 @@ function openAdDetail(rowIdx) {
 
   const sourceChip = _adpChip(source, _ADP_SOURCE_COLORS);
   const formatChip = _adpChip(format, _ADP_FORMAT_COLORS);
-  const subtitleChips = [sourceChip, formatChip, geo ? `<span style="font-size:12px;color:var(--text-secondary);">${geo}</span>` : ''].filter(Boolean).join('');
+  const subtitleChips = [sourceChip, formatChip, geo ? `<span style="font-size:12px;color:var(--text-secondary);">${_esc(geo)}</span>` : ''].filter(Boolean).join('');
 
   const imgBlock = (()=>{
     const isVid = thumbSrc && (thumbSrc.includes('so_0') || thumbSrc.match(/\.(mp4|webm|mov)/i));
@@ -8602,8 +8624,8 @@ function openAdDetail(rowIdx) {
       : thumbSrc ? thumbSrc.replace(/\/upload\/[^/]+\//, '/upload/') : '';
     const mediaEl = thumbSrc
       ? (isVid
-          ? `<div class="adp-img-wrap"><video class="adp-img" src="${fullSrc}" onclick="openLightbox('${fullSrc}')" style="cursor:zoom-in;" title="View" muted playsinline preload="metadata" controls></video></div>`
-          : `<div class="adp-img-wrap"><img class="adp-img" src="${thumbSrc}" onclick="openLightbox('${fullSrc}')" style="cursor:zoom-in;" title="View"></div>`)
+          ? `<div class="adp-img-wrap"><video class="adp-img" src="${_esc(_safeSrc(fullSrc))}" data-lightbox="${_esc(fullSrc)}" style="cursor:zoom-in;" title="View" muted playsinline preload="metadata" controls></video></div>`
+          : `<div class="adp-img-wrap"><img class="adp-img" src="${_esc(_safeSrc(thumbSrc))}" data-lightbox="${_esc(fullSrc)}" style="cursor:zoom-in;" title="View"></div>`)
       : `<div class="adp-img-wrap" onclick="document.getElementById('adp-img-file-${rowIdx}').click()" style="cursor:pointer;"><div class="adp-img-empty"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Click to upload creative</span></div></div>`;
     const removeBtn = thumbSrc
       ? `<button onclick="adpRemoveCreative(${rowIdx})" style="padding:5px 14px;font-size:11px;font-weight:600;font-family:inherit;background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:var(--radius-md);color:#ef4444;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.08);">Remove</button>`
@@ -8639,7 +8661,7 @@ function openAdDetail(rowIdx) {
               const placeholder = '<span class="adp-copy-placeholder">' + l + '\u2026</span>';
               return '<div class="adp-copy-item" style="margin:0;display:flex;flex-direction:column;">' +
                 '<div class="adp-copy-label">' + l + '</div>' +
-                '<div class="adp-copy-block" data-field="' + l + '" data-td="' + ti + '" contenteditable="false" style="min-height:70px;overflow-y:auto;">' + (v || placeholder) + '</div>' +
+                '<div class="adp-copy-block" data-field="' + l + '" data-td="' + ti + '" contenteditable="false" style="min-height:70px;overflow-y:auto;">' + (v ? _esc(v) : placeholder) + '</div>' +
                 '</div>';
             }).join('')}
           </div>
@@ -8668,7 +8690,7 @@ function openAdDetail(rowIdx) {
         <div class="adp-section" style="margin:0;">
           <div class="adp-section-header" style="padding:4px 0 3px;"><div class="adp-section-title">Notes</div></div>
           <div class="adp-copy-block" data-field="notes" data-td="15" contenteditable="false"
-               style="min-height:80px;overflow-y:auto;">${notes || '<span class="adp-copy-placeholder">Add notes…</span>'}</div>
+               style="min-height:80px;overflow-y:auto;">${notes ? _esc(notes) : '<span class="adp-copy-placeholder">Add notes…</span>'}</div>
         </div>
       </div>
 
@@ -8810,7 +8832,7 @@ function openTrafficDetail(rowIdx) {
 
   const sourceChip = _adpChip(source, _ADP_SOURCE_COLORS);
   const typeChip   = _adpChip(type, _ADP_TRAFFIC_COLORS);
-  const subtitleChips = [sourceChip, typeChip, geo ? `<span style="font-size:12px;color:var(--text-secondary);">${geo}</span>` : ''].filter(Boolean).join('');
+  const subtitleChips = [sourceChip, typeChip, geo ? `<span style="font-size:12px;color:var(--text-secondary);">${_esc(geo)}</span>` : ''].filter(Boolean).join('');
 
   const TRAFFIC_SOURCE_OPTS = [['','— select —'],['meta','Meta'],['tiktok','TikTok'],['google','Google'],['native','Native'],['youtube','YouTube'],['pinterest','Pinterest'],['snapchat','Snapchat'],['twitter','Twitter/X'],['linkedin','LinkedIn'],['reddit','Reddit'],['email','Email'],['sms','SMS'],['push','Push Notifications'],['in-app-dsp','In-App DSP'],['programmatic','Programmatic/DSP'],['outbrain','Outbrain'],['mgid','MGID'],['taboola','Taboola'],['revcontent','RevContent']];
   const TRAFFIC_TYPE_OPTS  = [['','— select —'],['paid-search','Paid Search'],['organic-search','Organic Search'],['paid-social','Paid Social'],['organic-social','Organic Social'],['direct','Direct'],['referral','Referral'],['display','Display'],['native','Native'],['video','Video'],['email','Email'],['push','Push'],['sms','SMS']];
@@ -8829,7 +8851,7 @@ function openTrafficDetail(rowIdx) {
     </div>
     <div class="adp-section">
       <div class="adp-section-header"><div class="adp-section-title">Notes</div></div>
-      <div class="adp-copy-block" data-field="notes" data-td="5" contenteditable="false" style="min-height:120px;max-height:300px;overflow-y:auto;">${notes || '<span class=\"adp-copy-placeholder\">Add notes…</span>'}</div>
+      <div class="adp-copy-block" data-field="notes" data-td="5" contenteditable="false" style="min-height:120px;max-height:300px;overflow-y:auto;">${notes ? _esc(notes) : '<span class=\"adp-copy-placeholder\">Add notes…</span>'}</div>
     </div>
   `;
   _adpOpen(source, '', body);
@@ -8852,7 +8874,7 @@ function openFunnelDetail(rowIdx) {
 
   const sourceChip = _adpChip(trafficSource, _ADP_SOURCE_COLORS);
   const funnelChip = _adpChip(funnelType, _ADP_FUNNEL_COLORS);
-  const subtitleChips = [sourceChip, funnelChip, geo ? `<span style="font-size:12px;color:var(--text-secondary);">${geo}</span>` : ''].filter(Boolean).join('');
+  const subtitleChips = [sourceChip, funnelChip, geo ? `<span style="font-size:12px;color:var(--text-secondary);">${_esc(geo)}</span>` : ''].filter(Boolean).join('');
 
   const SOURCE_OPTS = [['','— select —'],['meta','Meta'],['tiktok','TikTok'],['google','Google'],['native','Native'],['youtube','YouTube'],['pinterest','Pinterest'],['snapchat','Snapchat'],['twitter','Twitter/X'],['linkedin','LinkedIn'],['reddit','Reddit'],['email','Email'],['sms','SMS'],['push','Push Notifications'],['in-app-dsp','In-App DSP'],['programmatic','Programmatic/DSP'],['outbrain','Outbrain'],['mgid','MGID'],['taboola','Taboola'],['revcontent','RevContent']];
   const FUNNEL_TYPE_OPTS = [['','— select —'],['quiz','Quiz'],['landing-page','Landing Page'],['vsl','VSL'],['lead-gen','Lead Gen'],['multi-step','Multi-Step'],['advertorial','Advertorial'],['comparison','Comparison'],['checkout-page','Checkout Page']];
@@ -8881,7 +8903,7 @@ function openFunnelDetail(rowIdx) {
     </div>
     <div class="adp-section">
       <div class="adp-section-header"><div class="adp-section-title">Notes</div></div>
-      <div class="adp-copy-block" data-field="obs" data-td="9" contenteditable="false" style="min-height:60px;">${obs || '<span class=\"adp-copy-placeholder\">Add notes…</span>'}</div>
+      <div class="adp-copy-block" data-field="obs" data-td="9" contenteditable="false" style="min-height:60px;">${obs ? _esc(obs) : '<span class=\"adp-copy-placeholder\">Add notes…</span>'}</div>
     </div>
   `;
   _adpOpen(advertiser, '', body);
@@ -9039,7 +9061,7 @@ function adpSaveEdit() {
   const setLink = (td, val) => {
     const wrap = td?.querySelector('.link-chip-wrap');
     if (wrap) { setLinkChipValue(wrap, val); } else {
-      const a = td?.querySelector('a.link-chip'); if (a) { a.href = val; const t = a.querySelector('.link-chip-text'); if(t) t.textContent = val; }
+      const a = td?.querySelector('a.link-chip'); if (a) { _setChipHref(a, val); const t = a.querySelector('.link-chip-text'); if(t) t.textContent = val; }
     }
   };
   const setSelect = (td, val) => {
@@ -9285,7 +9307,7 @@ function updateTitleLinkBtn(url) {
   const btn = document.getElementById('title-link-btn');
   const title = document.getElementById('main-title');
   if (btn) {
-    if (url) { btn.href = url; btn.style.display = 'inline-flex'; }
+    if (_safeHref(url)) { btn.href = url; btn.style.display = 'inline-flex'; }
     else { btn.href = '#'; btn.style.display = 'none'; }
   }
   if (title) title.classList.toggle('has-url', !!url);
@@ -9471,13 +9493,13 @@ function renderOffersList(filter) {
       if (o.updated_at) return new Date(o.updated_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/New_York' });
       return 'Local';
     })();
-    return `<div class="offers-panel-item${isActive ? ' active' : ''}" onclick="selectOfferFromPanel('${o.id}')">
+    return `<div class="offers-panel-item${isActive ? ' active' : ''}" data-offer-id="${_esc(o.id)}" onclick="selectOfferFromPanel(this.dataset.offerId)">
       <div class="offers-panel-item-icon">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>
       </div>
       <div class="offers-panel-item-info">
-        <div class="offers-panel-item-name">${o.name}</div>
-        <div class="offers-panel-item-meta">${date}</div>
+        <div class="offers-panel-item-name">${_esc(o.name)}</div>
+        <div class="offers-panel-item-meta">${_esc(date)}</div>
       </div>
     </div>`;
   }).join('');
@@ -9771,7 +9793,7 @@ function showUndoToast(msg, undoFn) {
   const container = document.getElementById('toastContainer');
   const t = document.createElement('div');
   t.className = 'toast show';
-  t.innerHTML = `<div class="undo-toast"><span>${msg}</span><button onclick="this.closest('.toast').undoFn()">Undo</button></div>`;
+  t.innerHTML = `<div class="undo-toast"><span>${_esc(msg)}</span><button onclick="this.closest('.toast').undoFn()">Undo</button></div>`;
   t.undoFn = () => { undoFn(); t.classList.remove('show'); setTimeout(() => t.remove(), 250); };
   container.appendChild(t);
   const timer = setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 250); }, 5000);
@@ -9974,12 +9996,12 @@ function renderSavedSites() {
   }
   list.innerHTML = entries.map(([url, bin]) => `
     <div style="display:flex;align-items:center;gap:8px;background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:6px;padding:7px 10px;">
-      <span onclick="this.style.whiteSpace=this.style.whiteSpace==='normal'?'nowrap':'normal';this.style.overflow=this.style.whiteSpace==='normal'?'visible':'hidden'" style="flex:1;font-size:12px;color:var(--text-primary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" title="Click to expand">${url}</span>
-      <code onclick="this.style.whiteSpace=this.style.whiteSpace==='normal'?'nowrap':'normal';this.style.overflow=this.style.whiteSpace==='normal'?'visible':'hidden';this.style.wordBreak=this.style.whiteSpace==='normal'?'break-all':'normal'" style="font-size:11px;color:var(--text-secondary);flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" title="Click to expand">${bin}</code>
-      <button onclick="navigator.clipboard.writeText('https://${url}?bin=${bin}').then(()=>showToast('Link copied!','success'))" title="Copy share link" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:12px;padding:0 4px;opacity:0.6;flex-shrink:0;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+      <span onclick="this.style.whiteSpace=this.style.whiteSpace==='normal'?'nowrap':'normal';this.style.overflow=this.style.whiteSpace==='normal'?'visible':'hidden'" style="flex:1;font-size:12px;color:var(--text-primary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" title="Click to expand">${_esc(url)}</span>
+      <code onclick="this.style.whiteSpace=this.style.whiteSpace==='normal'?'nowrap':'normal';this.style.overflow=this.style.whiteSpace==='normal'?'visible':'hidden';this.style.wordBreak=this.style.whiteSpace==='normal'?'break-all':'normal'" style="font-size:11px;color:var(--text-secondary);flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" title="Click to expand">${_esc(bin)}</code>
+      <button data-url="${_esc(url)}" data-bin="${_esc(bin)}" onclick="navigator.clipboard.writeText('https://'+this.dataset.url+'?bin='+this.dataset.bin).then(()=>showToast('Link copied!','success'))" title="Copy share link" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:12px;padding:0 4px;opacity:0.6;flex-shrink:0;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1" stroke-linecap="round"/></svg>
       </button>
-      <button onclick="modalDeleteSite('${url}')" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:16px;line-height:1;padding:0 2px;opacity:0.5;flex-shrink:0;" onmouseover="this.style.opacity='1';this.style.color='#e05555'" onmouseout="this.style.opacity='0.5';this.style.color='var(--text-secondary)'">×</button>
+      <button data-url="${_esc(url)}" onclick="modalDeleteSite(this.dataset.url)" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:16px;line-height:1;padding:0 2px;opacity:0.5;flex-shrink:0;" onmouseover="this.style.opacity='1';this.style.color='#e05555'" onmouseout="this.style.opacity='0.5';this.style.color='var(--text-secondary)'">×</button>
     </div>
   `).join('');
 }
@@ -10043,8 +10065,8 @@ function modalRenderSites() {
   }
   list.innerHTML = _modalSites.map((s, i) => `
     <div style="display:flex;align-items:center;gap:8px;background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:6px;padding:8px 10px;">
-      <span style="flex:1;font-size:12px;color:var(--text-primary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.url}</span>
-      <code style="font-size:11px;color:var(--text-secondary);flex-shrink:0;">${s.bin.slice(0,8)}…</code>
+      <span style="flex:1;font-size:12px;color:var(--text-primary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_esc(s.url)}</span>
+      <code style="font-size:11px;color:var(--text-secondary);flex-shrink:0;">${_esc(s.bin.slice(0,8))}…</code>
       <button onclick="modalRemoveSite(${i})" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:16px;line-height:1;padding:0 2px;opacity:0.6;" onmouseover="this.style.opacity='1';this.style.color='var(--danger,#e05555)'" onmouseout="this.style.opacity='0.6';this.style.color='var(--text-secondary)'">×</button>
     </div>
   `).join('');
@@ -10311,8 +10333,8 @@ async function handleMediaUpload(input, previewId) {
       : url.replace('/upload/', '/upload/w_800,h_800,c_fill,q_auto:best/');
 
     const hmMediaTag = isVideo
-      ? `<video class="media-thumb" src="${url}" onclick="openLightbox('${url}')" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
-      : `<img class="media-thumb" src="${url}" onclick="openLightbox('${url}')" style="cursor:pointer" title="View">`;
+      ? `<video class="media-thumb" src="${_esc(_safeSrc(url))}" data-lightbox="${_esc(url)}" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
+      : `<img class="media-thumb" src="${_esc(_safeSrc(url))}" data-lightbox="${_esc(url)}" style="cursor:pointer" title="View">`;
     preview.innerHTML = `<div class="media-preview">
       ${hmMediaTag}
       <button class="media-remove" onclick="removeMedia('${uid}','${previewId}')">×</button>
@@ -10348,8 +10370,8 @@ async function handleMediaUpload(input, previewId) {
         const url = publicUrl;
         const thumbUrl = url; // No auto-thumbnail for Supabase, use full URL
         const sbHmMediaTag = isVideo
-          ? `<video class="media-thumb" src="${url}" onclick="openLightbox('${url}')" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
-          : `<img class="media-thumb" src="${url}" onclick="openLightbox('${url}')" style="cursor:pointer" title="View">`;
+          ? `<video class="media-thumb" src="${_esc(_safeSrc(url))}" data-lightbox="${_esc(url)}" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
+          : `<img class="media-thumb" src="${_esc(_safeSrc(url))}" data-lightbox="${_esc(url)}" style="cursor:pointer" title="View">`;
         preview.innerHTML = `<div class="media-preview">
           ${sbHmMediaTag}
           <button class="media-remove" onclick="removeMedia('${uid}','${previewId}')">×</button>
@@ -10483,13 +10505,13 @@ function setLinkChipValue(wrap, val) {
   const display = wrap.querySelector('.link-chip-wrap-display');
   if (!chip || !empty || !text) return;
   if (val) {
-    chip.href = val;
+    _setChipHref(chip, val);
     chip.style.display = 'flex';
     text.textContent = val.replace(/^https?:\/\//, '').substring(0, 28) + (val.replace(/^https?:\/\//, '').length > 28 ? '…' : '');
     empty.style.display = 'none';
     if (display) display.classList.add('has-link');
   } else {
-    chip.href = '#';
+    _setChipHref(chip, '#');
     chip.style.display = 'none';
     empty.style.display = '';
     if (display) display.classList.remove('has-link');
@@ -10498,7 +10520,13 @@ function setLinkChipValue(wrap, val) {
 function getLinkChipValue(wrap) {
   const chip = wrap.querySelector('.link-chip');
   if (!chip || chip.style.display === 'none') return '';
+  if (chip.dataset.rawUrl) return chip.dataset.rawUrl;
   return chip.href === window.location.href ? '' : chip.href;
+}
+// A link value that isn't http(s) is kept unchanged on the chip (so saving writes it back as it was) but never becomes its href.
+function _setChipHref(a, val) {
+  if (_safeHref(val)) { a.href = val; delete a.dataset.rawUrl; }
+  else { a.removeAttribute('href'); a.dataset.rawUrl = val; }
 }
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && e.target.classList.contains('link-input-field')) {
@@ -11093,7 +11121,7 @@ function restoreData(data) {
     if (h1 && t) {
       h1.dataset.text = t; h1.dataset.url = tu;
       h1.style.cssText = 'color:var(--text-primary);margin:0;white-space:normal;word-break:break-word;background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:8px;padding:4px 14px;font-size:inherit;';
-      if (tu) { const a = document.createElement('a'); a.href = tu; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; a.style.cssText = 'color:inherit;text-decoration:none;'; h1.innerHTML = ''; h1.appendChild(a); } else { h1.textContent = t; }
+      if (_safeHref(tu)) { const a = document.createElement('a'); a.href = tu; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; a.style.cssText = 'color:inherit;text-decoration:none;'; h1.innerHTML = ''; h1.appendChild(a); } else { h1.textContent = t; }
       // Persist to localStorage so runPostInit doesn't overwrite with stale value
       if (t) { localStorage.setItem('partners_title', t); document.title = 'Multi-Platform Creative Research'; }
     }
@@ -11158,17 +11186,17 @@ function restoreTable(id, rows, fn, keys) {
             const isVid = /\.(mp4|webm|mov)(\?|$)/i.test(v.url);
             const cardSrc = isVid ? v.url : v.url.replace('/upload/', '/upload/w_800,h_800,c_fill,q_auto:best/');
             const restoreMediaTag = isVid
-              ? `<video class="media-thumb" src="${cardSrc}" onclick="openLightbox('${v.url}')" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
-              : `<img class="media-thumb" src="${cardSrc}" onclick="openLightbox('${v.url}')" style="cursor:pointer" title="View">`;
+              ? `<video class="media-thumb" src="${_esc(_safeSrc(cardSrc))}" data-lightbox="${_esc(v.url)}" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
+              : `<img class="media-thumb" src="${_esc(_safeSrc(cardSrc))}" data-lightbox="${_esc(v.url)}" style="cursor:pointer" title="View">`;
             pd.innerHTML = `<div class="media-preview">
               ${restoreMediaTag}
               <button class="media-remove" onclick="removeMedia('${fi.id}','${pd.id}')">×</button>
-            </div><input type="hidden" class="cloudinary-url" value="${v.url}">`;
+            </div><input type="hidden" class="cloudinary-url" value="${_esc(v.url)}">`;
           } else if (v.t === 'img' && v.src) {
             const restoreImgIsVid = /\.(mp4|webm|mov)(\?|$)/i.test(v.src);
             const restoreImgTag = restoreImgIsVid
-              ? `<video class="media-thumb" src="${v.src}" onclick="openLightbox('${v.src}')" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
-              : `<img class="media-thumb" src="${v.src}" onclick="openLightbox('${v.src}')" style="cursor:pointer" title="View">`;
+              ? `<video class="media-thumb" src="${_esc(_safeSrc(v.src))}" data-lightbox="${_esc(v.src)}" style="cursor:pointer" title="View" muted playsinline preload="metadata" controls></video>`
+              : `<img class="media-thumb" src="${_esc(_safeSrc(v.src))}" data-lightbox="${_esc(v.src)}" style="cursor:pointer" title="View">`;
             pd.innerHTML = `<div class="media-preview">
               ${restoreImgTag}
               <button class="media-remove" onclick="removeMedia('${fi.id}','${pd.id}')">×</button>
@@ -11588,7 +11616,7 @@ function openHistoryPanel() {
           <span style="font-size:13px;font-weight:600;color:var(--text-primary);">${versionLabel}</span>
           <span style="font-size:11px;color:var(--text-muted);">${timeLabel}</span>
         </div>
-        <div style="font-size:12px;color:var(--text-secondary);">${rowCount} rows · ${title}</div>
+        <div style="font-size:12px;color:var(--text-secondary);">${rowCount} rows · ${_esc(title)}</div>
       </div>`;
     }).join('');
   }
@@ -11703,7 +11731,7 @@ function runPostInit(cloudData) {
   const tvm = localStorage.getItem('traffic_view_mode'); setTrafficView(tvm === 'grid' ? 'grid' : 'table');
   const fvm = localStorage.getItem('funnels_view_mode'); setFunnelsView(fvm === 'grid' ? 'grid' : 'table');
   const t = localStorage.getItem('partners_title'); const tu = localStorage.getItem('partners_title_url') || '';
-  if (t) { document.title = 'Multi-Platform Creative Research'; _offerSyncNamePill(t); const h = document.getElementById('main-title'); if (h) { h.dataset.text = t; h.dataset.url = tu; if (tu) { const a = document.createElement('a'); a.href = tu; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; a.style.cssText = 'color:inherit;text-decoration:underline;text-underline-offset:3px;'; h.innerHTML = ''; h.appendChild(a); } else { h.textContent = t; } } }
+  if (t) { document.title = 'Multi-Platform Creative Research'; _offerSyncNamePill(t); const h = document.getElementById('main-title'); if (h) { h.dataset.text = t; h.dataset.url = tu; if (_safeHref(tu)) { const a = document.createElement('a'); a.href = tu; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; a.style.cssText = 'color:inherit;text-decoration:underline;text-underline-offset:3px;'; h.innerHTML = ''; h.appendChild(a); } else { h.textContent = t; } } }
   updateTitleLinkBtn(tu);
   if (t) updateOfferSlugPath(t);
   // Sync offer select with current title (local fallback when no Supabase)
@@ -11922,13 +11950,13 @@ function offerRebuildSelect() {
   if (!_allOffers.length) {
     const title = (document.getElementById('main-title')?.dataset?.text || '').trim();
     sel.innerHTML = title
-      ? `<option value="__local__" selected>${truncate(title)} (local)</option>`
+      ? `<option value="__local__" selected>${_esc(truncate(title))} (local)</option>`
       : '<option value="">— select offer —</option>';
     return;
   }
   sel.innerHTML = '<option value="">— select offer —</option>'
     + _allOffers.map(o =>
-        `<option value="${o.id}"${o.id === _currentOfferId ? ' selected' : ''}>${truncate(o.name)}</option>`
+        `<option value="${_esc(o.id)}"${o.id === _currentOfferId ? ' selected' : ''}>${_esc(truncate(o.name))}</option>`
       ).join('');
 }
 
@@ -12155,7 +12183,7 @@ function offerSearchFilter(q) {
     ? _allOffers.filter(o => o.name.toLowerCase().includes(q.toLowerCase()))
     : _allOffers;
   if (!filtered.length) {
-    results.innerHTML = `<div style="padding:12px 14px;font-size:13px;color:var(--text-secondary);font-style:italic;">${q ? 'No matches for "' + q + '"' : 'No offers yet'}</div>`;
+    results.innerHTML = `<div style="padding:12px 14px;font-size:13px;color:var(--text-secondary);font-style:italic;">${q ? 'No matches for "' + _esc(q) + '"' : 'No offers yet'}</div>`;
     return;
   }
   results.innerHTML = filtered.map(o => {
@@ -12180,15 +12208,15 @@ function offerSearchFilter(q) {
     } else {
       date = new Date(o.updated_at).toLocaleDateString(undefined, {month:'short', day:'numeric'});
     }
-    return `<div onclick="offerLoadFromSearch('${o.id}')"
+    return `<div data-offer-id="${_esc(o.id)}" onclick="offerLoadFromSearch(this.dataset.offerId)"
       style="display:flex;align-items:center;justify-content:space-between;gap:10px;
              padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--border-light);
              ${active ? 'background:var(--blue-bg,#dbeafe);' : ''}
              transition:background 0.1s;"
       onmouseover="if(!${active})this.style.background='var(--bg-secondary)'"
       onmouseout="this.style.background='${active ? 'var(--blue-bg,#dbeafe)' : 'transparent'}'">
-      <span style="font-size:13px;font-weight:${active?'600':'400'};color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name}</span>
-      <span style="font-size:11px;color:var(--text-secondary);flex-shrink:0;">${date}</span>
+      <span style="font-size:13px;font-weight:${active?'600':'400'};color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_esc(o.name)}</span>
+      <span style="font-size:11px;color:var(--text-secondary);flex-shrink:0;">${_esc(date)}</span>
     </div>`;
   }).join('');
 }
@@ -12750,7 +12778,7 @@ function exitCardEditMode(card) {
       syncLinkCell(td, newUrl);
     } else {
       var anchor = td.querySelector('a.link-chip');
-      if (anchor) anchor.href = newUrl || '#';
+      if (anchor) _setChipHref(anchor, newUrl || '#');
     }
     _tableIdForRebuild = tableId;
   });
