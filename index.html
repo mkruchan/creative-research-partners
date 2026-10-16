@@ -9205,7 +9205,6 @@ async function renderEfOffers(data) {
     <span class="mx-period-label">${days ? `Last ${days} days` : 'Period'}</span><span class="mx-period-sep"></span>
     <span class="mx-period-dates">${_efFmtDate(per.from)} – ${_efFmtDate(per.to)}</span>` : '';
   const vis = { private: ['Private · ask your account manager', 'mx-tag--purple'], require_approval: ['Approval required', 'mx-tag--amber'], public: ['Open to all partners', ''] };
-  const fmt = n => Number(n).toLocaleString('en-US');
   grid.innerHTML = offers.map(o => {
     const stat = (label, v) => `<div class="mx-stat"><div class="mx-stat-label">${label}</div><div class="mx-stat-value">${v}</div></div>`;
     const v = vis[o.visibility];
@@ -9213,8 +9212,6 @@ async function renderEfOffers(data) {
       <div class="mx-card-top"><div class="mx-name">${_efEsc(o.name || ('Offer ' + o.id))}</div><div class="mx-id">ID ${_efEsc(o.id)}</div></div>
       ${(v || (o.status && o.status !== 'active')) ? `<div class="mx-tags">${v ? `<span class="mx-tag ${v[1]}">${v[0]}</span>` : ''}${o.status && o.status !== 'active' ? `<span class="mx-tag">${_efEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : ''}</div>` : ''}
       <div class="mx-stats">
-        ${stat('Clicks', fmt(o.clicks))}
-        ${stat('Conversions', fmt(o.conversions))}
         ${stat('CR', o.cr != null ? o.cr.toFixed(2) + '%' : '—')}
         ${stat('EPC', o.epc != null ? '$' + o.epc.toFixed(2) : '—')}
       </div>
