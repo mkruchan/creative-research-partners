@@ -12944,6 +12944,7 @@ window.addEventListener('DOMContentLoaded', function() {
   window.cloudHistoryLoad = function() { return Promise.resolve(); };
 });
 </script>
+<!-- design: partner-site table/sidebar/typography blocks -->
 <style>
   /* Traffic channels + funnels: rows grow to show the full text (see fitTableRows); very long cells scroll inside */
   #traffic-table tbody td textarea.rt-scroll, #funnels-table tbody td textarea.rt-scroll { overflow-y: auto !important; overscroll-behavior: contain; scrollbar-width: thin; }
@@ -13004,23 +13005,30 @@ window.addEventListener('DOMContentLoaded', function() {
       if (!cols.length) return;
       for (const c of cols) if (!c.th.dataset.baseW) c.th.dataset.baseW = parseFloat(c.th.style.width) || c.th.getBoundingClientRect().width;
       const rows = [...(table.tBodies[0]?.rows || [])];
-      let others = 0;
-      for (const c of cols.slice(0, -1)) {
+      // the column that fills the card: the last text column (the editor's Actions column, .remove-col, only fits its buttons)
+      const fillIdx = cols.map(c => !c.th.classList.contains('remove-col')).lastIndexOf(true);
+      const fill = cols[fillIdx >= 0 ? fillIdx : cols.length - 1];
+      for (const c of cols) {
+        if (c === fill) continue;
         const base = +c.th.dataset.baseW;
         const hcs = getComputedStyle(c.th);
         const headNeed = textW(c.th.textContent.trim(), c.th) + (parseFloat(hcs.paddingLeft) || 0) + (parseFloat(hcs.paddingRight) || 0) + 14;
         const need = Math.max(headNeed, 36, ...rows.map(r => cellNeed(r.cells[c.i])));
-        // text columns only shrink (long text wraps); badge columns (channel / funnel type) fit their longest badge
+        // text columns only shrink (long text wraps), but not below ~140px so words never break apart;
+        // badge columns (channel / funnel type) fit their longest badge; the actions column fits its buttons
         const badgeCol = rows.some(r => r.cells[c.i] && r.cells[c.i].querySelector('.sel-badge'));
-        const w = Math.round(badgeCol ? Math.min(need, 260) : Math.min(base, need));
+        const textCol = rows.some(r => r.cells[c.i] && r.cells[c.i].querySelector('textarea'));
+        const w = Math.round(c.th.classList.contains('remove-col') ? Math.max(headNeed, need)
+          : badgeCol ? Math.min(need, 260)
+          : textCol ? Math.min(Math.max(base, 140), need)
+          : Math.min(base, need));
         c.th.style.width = w + 'px';
-        others += w;
       }
-      const last = cols[cols.length - 1].th;
+      const last = fill.th;
       // some cells can't get as narrow as asked (buttons, pills) — use the widths the browser actually rendered
-      others = cols.slice(0, -1).reduce((a, c) => a + c.th.getBoundingClientRect().width, 0);
-      // fill the card; shrink the last column (down to 320px) before falling back to a real horizontal scroll
-      const lastW = Math.max(Math.min(+last.dataset.baseW, 320), box.clientWidth - others);
+      const others = cols.filter(c => c !== fill).reduce((a, c) => a + c.th.getBoundingClientRect().width, 0);
+      // fill the card; the notes column never gets narrower than 320px (the table scrolls sideways instead)
+      const lastW = Math.max(320, box.clientWidth - others);
       last.style.width = lastW + 'px';
       table.style.width = Math.round(others + lastW) + 'px';
     }
@@ -13151,6 +13159,12 @@ window.addEventListener('DOMContentLoaded', function() {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   })();
 </script>
+<style>
+  /* Typography (same as the partner site): smoother text, tabular numbers in tables */
+  body { font-feature-settings: 'tnum' 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+  h1#main-title, .ds-top-header-title { letter-spacing: -0.02em !important; }
+  td { font-variant-numeric: tabular-nums; }
+</style>
 <link rel="stylesheet" href="/creative-research-partners/vendor/n8n-chat-1.41.1/style.css">
 <style>
   /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
