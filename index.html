@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; font-src 'self' data:; connect-src 'self' https://mykytak.app.n8n.cloud; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Creative Research for Partners</title>
 <script>
@@ -1440,7 +1442,6 @@
 
 </style>
   <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     /* ── Offer picker buttons ── */
     #offer-select option { font-size: 14px; font-weight: 500; }
@@ -9210,7 +9211,7 @@ async function renderEfOffers(data) {
     const v = vis[o.visibility];
     return `<article class="mx-card">
       <div class="mx-card-top"><div class="mx-name">${_efEsc(o.name || ('Offer ' + o.id))}</div><div class="mx-id">ID ${_efEsc(o.id)}</div></div>
-      ${(v || o.pooled || (o.status && o.status !== 'active')) ? `<div class="mx-tags">${v ? `<span class="mx-tag ${v[1]}">${v[0]}</span>` : ''}${o.status && o.status !== 'active' ? `<span class="mx-tag">${_efEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : ''}${o.pooled ? `<span class="mx-tag" title="CR and EPC include copies of this offer with 20+ clicks">Includes offer copies</span>` : ''}</div>` : ''}
+      ${(v || (o.status && o.status !== 'active')) ? `<div class="mx-tags">${v ? `<span class="mx-tag ${v[1]}">${v[0]}</span>` : ''}${o.status && o.status !== 'active' ? `<span class="mx-tag">${_efEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : ''}</div>` : ''}
       <div class="mx-stats">
         ${stat('CR', o.cr != null ? o.cr.toFixed(2) + '%' : '—')}
         ${stat('EPC', o.epc != null ? '$' + o.epc.toFixed(2) : '—')}
@@ -10278,8 +10279,8 @@ function funnelRow(n) {
   </tr>`;
 }
 
-const CLOUDINARY_CLOUD = 'duvwxhj6k';
-const CLOUDINARY_PRESET = 'fuel_research';
+const CLOUDINARY_CLOUD = '';
+const CLOUDINARY_PRESET = '';
 
 async function handleMediaUpload(input, previewId) {
   const file = input.files[0]; if (!file) return;
@@ -11082,6 +11083,7 @@ function collectTable(id, keys) {
 function restoreData(data) {
   if (!data) return false;
   setTimeout(() => renderEfOffers(data), 0);
+  data = _partnerClean(data);
   if (data.header) {
     const h1 = document.getElementById('main-title');
     const t = data.header.title || ''; const tu = data.header.titleUrl || '';
@@ -11796,10 +11798,24 @@ let _allOffers     = [];
 const _SB_PUBLIC_URL = '';
 const _SB_PUBLIC_KEY = '';
 
+// Every string from partners.json is made inert before the page uses it: the page builds cards and panels by
+// pasting values into HTML (and inline onclick handlers), so markup characters are swapped for look-alikes and
+// links that aren't http(s) are dropped. Text keeps reading the same; nothing in the data can become code.
+function _partnerClean(v) {
+  if (Array.isArray(v)) return v.map(_partnerClean);
+  if (v && typeof v === 'object') { const o = {}; for (const k of Object.keys(v)) o[k] = _partnerClean(v[k]); return o; }
+  if (typeof v !== 'string') return v;
+  const bare = v.replace(/[\u0000-\u0020\u007f]+/g, '');
+  if (/^(javascript|vbscript|data|file|blob):/i.test(bare)) return '';
+  if (/^https?:\/\//i.test(v.trim())) return v.trim().replace(/["'<>`\s\\]/g, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase()).replace(/&/g, '%26');
+  return v.replace(/</g, '\uff1c').replace(/>/g, '\uff1e').replace(/&(?=[#a-z0-9])/gi, '\uff06').replace(/`/g, '\u02cb').replace(/\\/g, '\u29f5')
+    .replace(/(^|[\s(\[{\u2014-])"/g, '$1\u201c').replace(/"/g, '\u201d')
+    .replace(/(^|[\s(\[{\u2014-])'/g, '$1\u2018').replace(/'/g, '\u2019');
+}
 function _partnerOffers() {
   if (!window._partnerOffersP) {
     window._partnerOffersP = fetch(_basePath + 'data/partners.json', { cache: 'no-cache' })
-      .then(r => r.json()).then(j => j.offers || []).catch(() => []);
+      .then(r => r.json()).then(j => _partnerClean(j.offers || [])).catch(() => []);
   }
   return window._partnerOffersP;
 }
@@ -13098,7 +13114,7 @@ window.addEventListener('DOMContentLoaded', function() {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   })();
 </script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@n8n/chat@1.41.1/dist/style.css">
+<link rel="stylesheet" href="/creative-research-partners/vendor/n8n-chat-1.41.1/style.css">
 <style>
   /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
   #n8n-chat {
@@ -13193,9 +13209,10 @@ window.addEventListener('DOMContentLoaded', function() {
   @media (max-width: 480px) { #n8n-chat { --chat--window--width: calc(100vw - 24px); --chat--window--height: calc(100dvh - 110px); --chat--window--right: 12px; --chat--window--bottom: 12px; } }
   @media (prefers-reduced-motion: reduce) { #n8n-chat { --chat--transition-duration: 0s; } }
 </style>
-<!-- Research assistant (n8n "Creative Research – Partner Chat (public)"): sees research + website metrics only, never payouts -->
+<!-- Research assistant (n8n "Creative Research – Partner Chat (public)"): sees research + website metrics only, never payouts.
+     The widget is served from this site (vendor/, copied by make_page.py from the npm package @n8n/chat@1.41.1), not a CDN. -->
 <script type="module">
-  import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat@1.41.1/dist/chat.bundle.es.js';
+  import { createChat } from '/creative-research-partners/vendor/n8n-chat-1.41.1/chat.bundle.es.js';
 
   // First message lists example questions; the first ones follow the offer that is open on the page
   const titleNow = () => (document.getElementById('main-title')?.textContent || '').trim();
