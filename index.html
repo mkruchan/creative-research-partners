@@ -9210,7 +9210,7 @@ async function renderEfOffers(data) {
     const v = vis[o.visibility];
     return `<article class="mx-card">
       <div class="mx-card-top"><div class="mx-name">${_efEsc(o.name || ('Offer ' + o.id))}</div><div class="mx-id">ID ${_efEsc(o.id)}</div></div>
-      ${(v || (o.status && o.status !== 'active')) ? `<div class="mx-tags">${v ? `<span class="mx-tag ${v[1]}">${v[0]}</span>` : ''}${o.status && o.status !== 'active' ? `<span class="mx-tag">${_efEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : ''}</div>` : ''}
+      ${(v || o.pooled || (o.status && o.status !== 'active')) ? `<div class="mx-tags">${v ? `<span class="mx-tag ${v[1]}">${v[0]}</span>` : ''}${o.status && o.status !== 'active' ? `<span class="mx-tag">${_efEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : ''}${o.pooled ? `<span class="mx-tag" title="CR and EPC include copies of this offer with 20+ clicks">Includes offer copies</span>` : ''}</div>` : ''}
       <div class="mx-stats">
         ${stat('CR', o.cr != null ? o.cr.toFixed(2) + '%' : '—')}
         ${stat('EPC', o.epc != null ? '$' + o.epc.toFixed(2) : '—')}
