@@ -6741,7 +6741,7 @@
       <button class="md-btn" onclick="sbModalClose()">Cancel</button>
       <button class="md-btn md-btn--primary" id="sb-connect-btn" onclick="sbSaveConfig()" disabled style="opacity:0.5;cursor:default;">Connect &amp; Save</button>
     </div>
-    <div class="md-section-divider">
+    <div class="md-section-divider" hidden>
       <div class="md-section-header">
         <span class="md-section-label">☁️ JSONBin Backup</span>
         <span class="md-badge md-badge--amber">BACKUP</span>
@@ -7284,7 +7284,7 @@
 <script>
 
 // Master directory bin — stores {_directory: {url: binId}} for all sites
-const MASTER_BIN_ID = '';
+const MASTER_BIN_ID = '';   // JSONBin retired 2026-10-16 (key was public); data backed up in research-data/jsonbin-backup
 const MASTER_API_KEY = '';
 
 
@@ -7335,6 +7335,7 @@ let BIN_ID  = _urlBin || '';
 let API_KEY = MASTER_API_KEY;
 
 async function loadDirectory() {
+  if (!MASTER_API_KEY) return {};
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
       headers: { 'X-Master-Key': MASTER_API_KEY }
@@ -7352,6 +7353,7 @@ async function loadDirectory() {
 }
 
 async function saveDirectory(dir) {
+  if (!MASTER_API_KEY) return;
   try {
     // Read current master bin, update _directory, write back
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
@@ -7369,6 +7371,7 @@ async function saveDirectory(dir) {
 }
 
 async function loadSbCreds() {
+  if (!MASTER_API_KEY) return null;
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
       headers: { 'X-Master-Key': MASTER_API_KEY }
@@ -7380,6 +7383,7 @@ async function loadSbCreds() {
 }
 
 async function saveSbCreds(url, key) {
+  if (!MASTER_API_KEY) return;
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
       headers: { 'X-Master-Key': MASTER_API_KEY }
