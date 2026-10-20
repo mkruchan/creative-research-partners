@@ -54,77 +54,16 @@
     #ads-table th:nth-child(8), #ads-table td:nth-child(8),
     #ads-table th:nth-child(9), #ads-table td:nth-child(9),
     #funnels-table th:nth-child(4), #funnels-table td:nth-child(4) { display: none !important; }
-    #title-link-btn { background: var(--accent, #2563eb) !important; color: #fff !important; border-color: transparent !important; padding: 6px 12px !important; }
-    #funnels-table td:nth-child(5) .link-chip { background: var(--accent, #2563eb); color: #fff; border-radius: 6px; padding: 3px 8px; font-weight: 600; }
-    #funnels-table td:nth-child(5) .link-chip svg path { stroke: #fff; }
-    .ef-open { display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 10px; background: var(--accent, #2563eb); color: #fff !important; font-weight: 590; font-size: 14px; text-decoration: none; transition: background .15s; }
-    .ef-open:hover { background: var(--accent-hover, #1d4ed8); }
-
-    /* Metrics block */
-    .mx { margin: 0 0 20px; padding: 20px; border-radius: 14px; background: var(--surface, #fff); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
-    .mx-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
-    .mx-title-wrap { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .mx-icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-muted); color: var(--accent); flex-shrink: 0; }
-    .mx-title { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary); letter-spacing: -0.01em; }
-    .mx-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-    .mx-period { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 999px; background: var(--blue-bg); color: var(--blue-text); font-size: 13px; white-space: nowrap; }
-    .mx-period svg { flex-shrink: 0; }
-    .mx-period-label { font-weight: 600; font-size: 13px; }
-    .mx-period-dates { font-weight: 600; font-variant-numeric: tabular-nums; }
-    .mx-period-sep { width: 1px; height: 14px; background: currentColor; opacity: .3; }
-    .mx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-    .mx-card { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); transition: box-shadow .15s, transform .15s; }
-    .mx-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
-    .mx-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-    .mx-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); line-height: 1.35; }
-    .mx-id { font-size: 12px; font-weight: 500; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; padding-top: 2px; }
-    .mx-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    .mx-tag { font-size: 12px; font-weight: 500; border-radius: 999px; padding: 3px 10px; background: var(--bg-tertiary); color: var(--text-secondary); }
-    .mx-tag--amber { background: var(--amber-bg); color: var(--amber-text); }
-    .mx-tag--purple { background: var(--purple-bg); color: var(--purple-text); }
-    .mx-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .mx-stat { padding: 10px 12px; border-radius: 10px; background: var(--bg-tertiary); }
-    .mx-stat-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
-    .mx-stat-value { margin-top: 2px; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
-    .mx-card .ef-open { margin-top: auto; }
-    #nav-metrics[hidden] { display: none !important; }
-    /* Board views show one section: Metrics/insights stay on the Report page, Metrics has its own view */
-    body.board-view #insights, body.board-view #ef-offers { display: none !important; }
-    body.board-view.board-metrics #ef-offers { display: block !important; }
 
     /* Typography */
     body { font-feature-settings: 'tnum' 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
     h1#main-title, .ds-top-header-title, .mx-title, .ins-title { letter-spacing: -0.02em !important; }
     .mx-stat-value, .mx-period-dates, td { font-variant-numeric: tabular-nums; }
 
-    /* What's working / What to do */
+    /* the editable takeaway/recommendation cards are not part of the partner edition (the overview has the summaries) */
     #ic-grid-notes { display: none !important; }
-    .ins { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0 0 20px; }
-    .ins-card { padding: 18px 20px; border-radius: 14px; background: var(--surface, #fff); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); border-top: 4px solid var(--ins-c); }
-    .ins-card--working { --ins-c: var(--green-success); --ins-bg: var(--teal-bg); --ins-text: var(--teal-text); }
-    .ins-card--todo { --ins-c: var(--accent); --ins-bg: var(--blue-bg); --ins-text: var(--blue-text); }
-    .ins-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-    .ins-badge { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--ins-bg); color: var(--ins-text); flex-shrink: 0; }
-    .ins-title { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary); letter-spacing: -0.01em; }
-    .ins-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; counter-reset: ins; }
-    .ins-list li { position: relative; padding-left: 28px; font-size: 14.5px; line-height: 1.45; color: var(--text-primary); }
-    .ins-card--working .ins-list li::before { content: ""; position: absolute; left: 6px; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--ins-c); }
-    .ins-card--todo .ins-list li { counter-increment: ins; }
-    .ins-card--todo .ins-list li::before { content: counter(ins); position: absolute; left: 0; top: 1px; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: var(--ins-bg); color: var(--ins-text); }
-    .ins-more { margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 10px; }
-    .ins-more summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); list-style: none; }
-    .ins-more summary::-webkit-details-marker { display: none; }
-    .ins-more summary::after { content: " ▾"; }
-    .ins-more[open] summary::after { content: " ▴"; }
-    .ins-full { margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
-    .ins-full h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-    .ins-full p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.55; color: var(--text-primary); }
-    .ins-card[hidden] { display: none !important; }
-    @media (max-width: 860px) { .ins { grid-template-columns: 1fr; } }
-    @media (max-width: 600px) {
-      .mx { padding: 16px; }
-      .mx-period { white-space: normal; border-radius: 12px; }
-    }
+    /* affiliates don't need the export menu (the editor and share copy keep it for the team) */
+    #nav-export { display: none !important; }
   </style>
 
   <script>
@@ -6595,10 +6534,6 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="file-text"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/> <path d="M14 2v5a1 1 0 0 0 1 1h5"/> <path d="M10 9H8"/> <path d="M16 13H8"/> <path d="M16 17H8"/></svg>
       Report
     </button>
-    <button class="ds-nav-item" id="nav-metrics" onclick="openMetrics()" hidden>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="chart-line"><path d="M3 3v16a2 2 0 0 0 2 2h16"/> <path d="m19 9-5 5-4-4-3 3"/></svg>
-      Metrics
-    </button>
     <button class="ds-nav-item" id="nav-offers" onclick="openOffersPanel()">
       <!-- Tag/label icon like reference -->
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="tag"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/> <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
@@ -6962,36 +6897,51 @@
     </div><!-- /.oc-meta -->
 
   </div><!-- /.ds-offer-card -->
-
-  <!-- ── Metrics (partner edition) ── -->
-  <section id="ef-offers" class="mx" style="display:none;" aria-labelledby="mx-title">
-    <div class="mx-head">
-      <div class="mx-title-wrap">
-        <div class="mx-icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="chart-line"><path d="M3 3v16a2 2 0 0 0 2 2h16"/> <path d="m19 9-5 5-4-4-3 3"/></svg>
-        </div>
-        <div>
-          <h2 class="mx-title" id="mx-title">Metrics</h2>
-        </div>
-      </div>
-      <div class="mx-period" id="ef-offers-period"></div>
+  <!-- ── Overview (shared, build/internal/overview_sections.html): what top partners earn, how to start, proven creatives ── -->
+  <section id="ov-snapshot" class="ov-sec" hidden aria-labelledby="ov-snapshot-title">
+    <div class="ov-head">
+      <div><h2 class="ov-title" id="ov-snapshot-title">What top partners earn</h2>
+        <div class="ov-sub">The best partners on this offer, not an average of all traffic</div></div>
+      <div class="ov-period" id="ov-snapshot-period"></div>
     </div>
-    <div class="mx-grid" id="ef-offers-grid"></div>
+    <div class="sn-list" id="ov-snapshot-list"></div>
   </section>
 
-  <!-- ── What's working / What to do (partner edition: replaces the four takeaway/recommendation cards) ── -->
+  <section id="ov-proven" class="ov-sec" hidden aria-labelledby="ov-proven-title">
+    <div class="ov-head">
+      <div><h2 class="ov-title" id="ov-proven-title">Proven creatives</h2>
+        <div class="ov-sub">The longest-running ads — advertisers switch losing ads off fast. Click one for the details and the file.</div></div>
+    </div>
+    <div class="pc-grid" id="ov-proven-grid"></div>
+  </section>
+
+  <section id="ov-funnels" class="ov-sec" hidden aria-labelledby="ov-funnels-title">
+    <div class="ov-head">
+      <div><h2 class="ov-title" id="ov-funnels-title">Top funnels</h2>
+        <div class="ov-sub">Where the best ads send people. Click one for the details.</div></div>
+    </div>
+    <div class="tf-list" id="ov-funnels-list"></div>
+  </section>
+
+  <div class="fr-bar" id="fr-bar">
+    <div><b>Full research</b> <span class="fr-count" id="fr-count"></span></div>
+    <button type="button" id="fr-toggle" onclick="toggleFullResearch()" aria-expanded="false">Show how to start, channels, all ads &amp; funnels</button>
+  </div>
+
+  <!-- How to start / What's working: part of Full research -->
   <section id="insights" class="ins" style="display:none;">
+    <div class="ins-card ins-card--todo" id="ins-todo">
+      <div class="ins-head"><span class="ins-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="arrow-right"><path d="M5 12h14"/> <path d="m12 5 7 7-7 7"/></svg></span><h2 class="ins-title">How to start</h2></div>
+      <ol class="ins-list"></ol>
+      <details class="ins-more"><summary>Read more</summary><div class="ins-full"></div></details>
+    </div>
     <div class="ins-card ins-card--working" id="ins-working">
       <div class="ins-head"><span class="ins-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="check"><path d="M20 6 9 17l-5-5"/></svg></span><h2 class="ins-title">What's working</h2></div>
       <ul class="ins-list"></ul>
       <details class="ins-more"><summary>Read more</summary><div class="ins-full"></div></details>
     </div>
-    <div class="ins-card ins-card--todo" id="ins-todo">
-      <div class="ins-head"><span class="ins-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="arrow-right"><path d="M5 12h14"/> <path d="m12 5 7 7-7 7"/></svg></span><h2 class="ins-title">What to do</h2></div>
-      <ol class="ins-list"></ol>
-      <details class="ins-more"><summary>Read more</summary><div class="ins-full"></div></details>
-    </div>
   </section>
+
   <div class="ic-grid" id="ic-grid-notes">
 
     <!-- ── Creative Takeaways card ── -->
@@ -9196,78 +9146,6 @@ document.addEventListener('click', e => {
   });
 });
 
-
-// ── Metrics block (partner edition) ──
-function _efEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
-function _efFmtDate(d) {
-  if (!d) return '';
-  const p = d.split('-'); if (p.length !== 3) return d;
-  return `${+p[2]} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1] - 1]} ${p[0]}`;
-}
-function _efDays(a, b) { const d = (new Date(b) - new Date(a)) / 864e5 + 1; return isFinite(d) ? Math.round(d) : null; }
-function openMetrics() {
-  if (_currentBoard !== 'metrics') openBoardView('metrics');
-}
-function renderInsights(data) {
-  const box = document.getElementById('insights');
-  if (!box) return;
-  const ins = data && data.insights;
-  const fill = (id, bullets, full) => {
-    const card = document.getElementById(id);
-    const sections = Object.entries(full || {}).filter(([, t]) => t && t.trim());
-    card.hidden = !bullets.length && !sections.length;
-    card.querySelector('.ins-list').innerHTML = bullets.map(b => `<li>${_efEsc(b)}</li>`).join('');
-    const more = card.querySelector('.ins-more');
-    more.hidden = !sections.length; more.open = !bullets.length;
-    more.querySelector('.ins-full').innerHTML = sections.map(([h, t]) =>
-      `<div><h3>${_efEsc(h)}</h3>${t.split(/\n\s*\n|\n(?=- )/).map(p => `<p>${_efEsc(p.trim())}</p>`).join('')}</div>`).join('');
-  };
-  if (!ins) { box.style.display = 'none'; return; }
-  fill('ins-working', ins.working || [], ins.workingFull);
-  fill('ins-todo', ins.todo || [], ins.todoFull);
-  box.style.display = document.getElementById('ins-working').hidden && document.getElementById('ins-todo').hidden ? 'none' : '';
-}
-// The page sometimes restores a cached copy of the report (built by collectData, which has no
-// efOffers), so the block is always looked up by the open report's id in partners.json.
-async function renderEfOffers(data) {
-  const box = document.getElementById('ef-offers'), grid = document.getElementById('ef-offers-grid');
-  const nav = document.getElementById('nav-metrics');
-  if (!box || !grid) return;
-  const rows = await _partnerOffers();
-  const row = rows.find(r => r.id === _currentOfferId) || rows.find(r => r.data?.header?.title && r.data.header.title === data?.header?.title);
-  if (row) data = row.data;
-  renderInsights(data);
-  const offers = (data && data.efOffers) || [];
-  if (!offers.length) {
-    box.style.display = 'none'; grid.innerHTML = ''; if (nav) nav.hidden = true;
-    if (_currentBoard === 'metrics') openReport();  // switched to a report without metrics
-    return;
-  }
-  if (nav) nav.hidden = false;
-  const per = data.efPeriod || {};
-  const days = _efDays(per.from, per.to);
-  document.getElementById('ef-offers-period').innerHTML = per.from ? `
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-icon="calendar"><path d="M8 2v3"/> <path d="M16 2v3"/> <rect x="3" y="3" width="18" height="18" rx="2"/> <path d="M3 9h18"/></svg>
-    <span class="mx-period-label">${days ? `Last ${days} days` : 'Period'}</span><span class="mx-period-sep"></span>
-    <span class="mx-period-dates">${_efFmtDate(per.from)} – ${_efFmtDate(per.to)}</span>` : '';
-  const vis = { private: ['Private · ask your account manager', 'mx-tag--purple'], require_approval: ['Approval required', 'mx-tag--amber'], public: ['Open to all partners', ''] };
-  grid.innerHTML = offers.map(o => {
-    const stat = (label, v) => `<div class="mx-stat"><div class="mx-stat-label">${label}</div><div class="mx-stat-value">${v}</div></div>`;
-    const v = vis[o.visibility];
-    return `<article class="mx-card">
-      <div class="mx-card-top"><div class="mx-name">${_efEsc(o.name || ('Offer ' + o.id))}</div><div class="mx-id">ID ${_efEsc(o.id)}</div></div>
-      ${(v || (o.status && o.status !== 'active')) ? `<div class="mx-tags">${v ? `<span class="mx-tag ${v[1]}">${v[0]}</span>` : ''}${o.status && o.status !== 'active' ? `<span class="mx-tag">${_efEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : ''}</div>` : ''}
-      <div class="mx-stats">
-        ${stat('CR', o.cr != null ? o.cr.toFixed(2) + '%' : '—')}
-        ${stat('EPC', o.epc != null ? '$' + o.epc.toFixed(2) : '—')}
-      </div>
-      <a class="ef-open" href="${_efEsc(o.link)}" target="_blank" rel="noopener">Open in Everflow
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="external-link"><path d="M15 3h6v6"/> <path d="M10 14 21 3"/> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
-    </article>`;
-  }).join('');
-  box.style.display = '';
-}
-
 function openTitleLink(e) {
   const btn = document.getElementById('title-link-btn');
   if (!btn || !btn.href || btn.href === '#' || btn.href.endsWith('#')) {
@@ -9288,8 +9166,8 @@ function offerSlugFromTitle(title) {
 // Which sidebar section is active, tracked so the URL can always reflect both
 // the offer AND the section as two real path segments: /offer-slug/section-slug
 let _currentTab = 'report';
-const TAB_PATH_SLUGS = { metrics:'metrics', report:'report', offers:'offers', traffic:'channels', ads:'ads', funnels:'funnels', history:'history', export:'export' };
-const TAB_PATH_SLUGS_REVERSE = { metrics:'metrics', report:'report', offers:'offers', channels:'traffic', ads:'ads', funnels:'funnels', history:'history', export:'export' };
+const TAB_PATH_SLUGS = { report:'report', offers:'offers', traffic:'channels', ads:'ads', funnels:'funnels', history:'history', export:'export' };
+const TAB_PATH_SLUGS_REVERSE = { metrics:'report', report:'report', offers:'offers', channels:'traffic', ads:'ads', funnels:'funnels', history:'history', export:'export' };
 
 function setTabAndUpdateUrl(tab) {
   _currentTab = tab;
@@ -9311,7 +9189,6 @@ function restoreTabFromUrl() {
   if (tab === 'offers') { openOffersPanel(); return; }
   if (tab === 'history') { openHistoryPanel(); return; }
   if (tab === 'export') { openExportPanel(); return; }
-  if (tab === 'metrics') { if (_currentBoard !== 'metrics') openMetrics(); return; }
   if (['traffic','ads','funnels'].includes(tab)) { openBoardView(tab); return; }
 }
 function updateOfferSlugPath(title) {
@@ -9360,8 +9237,7 @@ function openReport() {
 const _boardSections = {
   traffic: { id: 'section-traffic', nav: 'nav-traffic', title: 'Top Traffic Channels' },
   ads:     { id: 'section-ads',     nav: 'nav-ads',     title: 'Top Ads' },
-  funnels: { id: 'section-funnels', nav: 'nav-funnels', title: 'Top Funnels' },
-  metrics: { id: 'ef-offers',       nav: 'nav-metrics', title: 'Metrics' }
+  funnels: { id: 'section-funnels', nav: 'nav-funnels', title: 'Top Funnels' }
 };
 let _currentBoard = null;
 
@@ -9375,7 +9251,6 @@ function openBoardView(board) {
   if (_currentBoard === board) { closeBoardView(); return; }
   closeOffersPanel(); closeHistoryPanel(); closeExportPanel();
   _currentBoard = board;
-  document.body.classList.toggle('board-metrics', board === 'metrics');
   const cfg = _boardSections[board];
 
   // Add board-view class to body — CSS handles hiding
@@ -9405,8 +9280,7 @@ function openBoardView(board) {
   const subtitles = {
     traffic: 'Track and compare performance across traffic channels',
     ads:     'Browse and analyze top performing ad creatives',
-    funnels: 'Explore the most effective funnel structures',
-    metrics: 'Everflow performance for the offers in this report'
+    funnels: 'Explore the most effective funnel structures'
   };
   if (headerTitle) {
     headerTitle.dataset._origTitle = headerTitle.dataset._origTitle || headerTitle.textContent;
@@ -9423,7 +9297,6 @@ function openBoardView(board) {
 function closeBoardView() {
   if (!_currentBoard) return;
   _currentBoard = null;
-  document.body.classList.remove('board-metrics');
 
   // Remove board-view class — CSS restores visibility
   document.body.classList.remove('board-view');
@@ -11121,8 +10994,8 @@ function collectTable(id, keys) {
 }
 function restoreData(data) {
   if (!data) return false;
-  setTimeout(() => renderEfOffers(data), 0);
   data = _partnerClean(data);
+  setTimeout(() => renderOverview(data), 0);
   if (data.header) {
     const h1 = document.getElementById('main-title');
     const t = data.header.title || ''; const tu = data.header.titleUrl || '';
@@ -13165,6 +13038,259 @@ window.addEventListener('DOMContentLoaded', function() {
   h1#main-title, .ds-top-header-title { letter-spacing: -0.02em !important; }
   td { font-variant-numeric: tabular-nums; }
 </style>
+<!-- overview: affiliate-first report page (owner, 2026-10-20). Shared by the affiliate site, the share copy and the editor:
+     offer snapshot with what the TOP partners earn (90 days, 100+ clicks, 10+ conversions; never named), payout range,
+     How to start / What's working, proven creatives, everything else behind "Full research". -->
+<style id="overview-css">
+  .ov-sec { margin: 0 0 20px; padding: 20px; border-radius: 14px; background: var(--surface, #fff); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
+  .ov-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ov-title { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary); letter-spacing: -0.01em; }
+  .ov-sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 3px; }
+  .ov-period { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px; background: var(--blue-bg); color: var(--blue-text); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .sn-list { display: flex; flex-direction: column; gap: 14px; }
+  .sn-card { padding: 16px; border-radius: 12px; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 14px; }
+  .sn-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .sn-name { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: 1.35; }
+  .sn-id { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; margin-left: 6px; font-weight: 500; }
+  .sn-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sn-tag { font-size: 12px; font-weight: 500; border-radius: 999px; padding: 3px 10px; background: var(--bg-tertiary); color: var(--text-secondary); }
+  .sn-tag--amber { background: var(--amber-bg); color: var(--amber-text); } .sn-tag--purple { background: var(--purple-bg); color: var(--purple-text); }
+  .sn-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .sn-tile { padding: 12px 14px; border-radius: 10px; background: var(--bg-tertiary); }
+  .sn-tile--hero { background: var(--teal-bg); }
+  .sn-tile-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+  .sn-tile-value { margin-top: 3px; font-size: 22px; font-weight: 650; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .sn-tile--hero .sn-tile-value { color: var(--teal-text); }
+  .sn-tile-note { margin-top: 3px; font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .sn-avg { font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); margin: 0; }
+  .sn-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .sn-open { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 10px; background: var(--accent, #2563eb); color: #fff !important; font-weight: 600; font-size: 14px; text-decoration: none; }
+  .sn-open:hover { background: var(--accent-hover, #1d4ed8); }
+  .sn-trust { font-size: 12px; color: var(--text-muted); }
+  .pc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+  .pc-card { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); cursor: pointer; text-align: left; padding: 0; font: inherit; color: inherit; transition: box-shadow .15s, transform .15s; }
+  .pc-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .pc-media { aspect-ratio: 1 / 1; background: var(--bg-tertiary); display: grid; place-items: center; overflow: hidden; }
+  .pc-media img, .pc-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pc-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .pc-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pc-chip { font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 2px 8px; background: var(--bg-tertiary); color: var(--text-secondary); }
+  .pc-chip--days { background: var(--teal-bg); color: var(--teal-text); }
+  .pc-head { font-size: 13px; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .tf-list { display: flex; flex-direction: column; gap: 8px; }
+  .tf-row { display: grid; grid-template-columns: minmax(0, 1.6fr) auto auto auto auto; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px;
+    background: var(--bg-primary, #fff); border: 1px solid var(--border-light); cursor: pointer; text-align: left; font: inherit; color: inherit; width: 100%; }
+  .tf-row:hover { box-shadow: var(--shadow-sm); }
+  .tf-main { min-width: 0; }
+  .tf-domain { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tf-adv { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tf-chip { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; background: var(--bg-tertiary); color: var(--text-secondary); white-space: nowrap; }
+  .tf-chip--type { background: var(--purple-bg); color: var(--purple-text); }
+  .tf-ef { font-size: 12.5px; font-weight: 600; color: var(--accent, #2563eb) !important; text-decoration: none; white-space: nowrap; }
+  .tf-more, .pc-more { font-size: 12.5px; font-weight: 600; color: var(--accent, #2563eb); white-space: nowrap; }
+  @media (max-width: 760px) { .tf-row { grid-template-columns: 1fr auto; } .tf-row .tf-chip:not(.tf-chip--type) { display: none; } }
+  .fr-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 20px; padding: 14px 18px; border-radius: 14px; background: var(--surface, #fff); border: 1px dashed var(--border-mid); }
+  .fr-bar button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border-light); background: var(--bg-tertiary); color: var(--text-primary); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .fr-count { font-size: 13px; color: var(--text-secondary); }
+  /* the full research (channels, every ad, funnels, notes) stays out of the way on the overview until opened;
+     the sidebar's Creatives / Funnels / Channels views always show their section */
+  body:not(.board-view):not(.fr-open) #section-traffic, body:not(.board-view):not(.fr-open) #section-ads,
+  body:not(.board-view):not(.fr-open) #section-funnels, body:not(.board-view):not(.fr-open) #ic-grid-notes,
+  body:not(.board-view):not(.fr-open) #insights { display: none !important; }
+  body.board-view #ov-snapshot, body.board-view #insights, body.board-view #ov-proven, body.board-view #ov-funnels, body.board-view #fr-bar { display: none !important; }
+  /* ad cards: creative, offer, landing, channel, format, geo, days running; "More" opens angle, headline, CTA, title, notes */
+  /* Everflow links stand out (title button, funnel offer links, detail panel) */
+  #title-link-btn { background: var(--accent, #2563eb) !important; color: #fff !important; border-color: transparent !important; padding: 6px 12px !important; }
+  #funnels-table td:nth-child(5) .link-chip { background: var(--accent, #2563eb); color: #fff; border-radius: 6px; padding: 3px 8px; font-weight: 600; }
+  #funnels-table td:nth-child(5) .link-chip svg path { stroke: #fff; }
+  .ef-open { display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 10px; background: var(--accent, #2563eb); color: #fff !important; font-weight: 590; font-size: 14px; text-decoration: none; transition: background .15s; }
+  .ef-open:hover { background: var(--accent-hover, #1d4ed8); }
+  /* sidebar: Overview, Creatives, Funnels (channels live in Full research) */
+  #nav-traffic, #nav-metrics { display: none !important; }
+  /* How to start / What's working */
+  .ins { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0 0 20px; }
+  .ins-card { padding: 18px 20px; border-radius: 14px; background: var(--surface, #fff); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); border-top: 4px solid var(--ins-c); }
+  .ins-card--working { --ins-c: var(--green-success); --ins-bg: var(--teal-bg); --ins-text: var(--teal-text); }
+  .ins-card--todo { --ins-c: var(--accent); --ins-bg: var(--blue-bg); --ins-text: var(--blue-text); }
+  .ins-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .ins-badge { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--ins-bg); color: var(--ins-text); flex-shrink: 0; }
+  .ins-title { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary); letter-spacing: -0.01em; }
+  .ins-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; counter-reset: ins; }
+  .ins-list li { position: relative; padding-left: 28px; font-size: 14.5px; line-height: 1.45; color: var(--text-primary); }
+  .ins-card--working .ins-list li::before { content: ""; position: absolute; left: 6px; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--ins-c); }
+  .ins-card--todo .ins-list li { counter-increment: ins; }
+  .ins-card--todo .ins-list li::before { content: counter(ins); position: absolute; left: 0; top: 1px; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: var(--ins-bg); color: var(--ins-text); }
+  .ins-more { margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 10px; }
+  .ins-more summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); list-style: none; }
+  .ins-more summary::-webkit-details-marker { display: none; }
+  .ins-more summary::after { content: " ▾"; }
+  .ins-more[open] summary::after { content: " ▴"; }
+  .ins-full { margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
+  .ins-full h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+  .ins-full p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.55; color: var(--text-primary); }
+  .ins-card[hidden] { display: none !important; }
+  @media (max-width: 860px) { .ins { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) {
+    .mx { padding: 16px; }
+    .mx-period { white-space: normal; border-radius: 12px; }
+  }
+  @media (max-width: 760px) { .sn-tiles { grid-template-columns: 1fr; } }
+</style>
+<script>
+  // Data for the overview: the affiliate site's own partners.json (CR/EPC/payout are only ever published there,
+  // anonymised). The editor and share copy read the same file and match the open report by id.
+  function _ovReports() {
+    if (!window._ovReportsP) {
+      window._ovReportsP = typeof _partnerOffers === 'function' ? _partnerOffers()
+        : fetch('/creative-research-partners/data/partners.json', { cache: 'no-cache' }).then(r => r.json()).then(j => j.offers || []).catch(() => []);
+    }
+    return window._ovReportsP;
+  }
+  function _ovEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function _ovDate(d) { const p = (d || '').split('-'); return p.length === 3 ? `${+p[2]} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1] - 1]} ${p[0]}` : (d || ''); }
+  function _ovMoney(v) { return v == null ? '—' : '$' + (Math.round(v * 100) / 100).toFixed(v >= 100 ? 0 : 2).replace(/\.00$/, ''); }
+  function _ovRange(a, b, fmt) { return a == null ? '—' : (a === b ? fmt(a) : `${fmt(a)} – ${fmt(b)}`); }
+  function _ovEverflowLink(u) { return /^https:\/\/point2web\.everflowclient\.io\/affiliate\/offers\/\d+$/.test(u || '') ? u : ''; }
+  function _ovMediaUrl(u) { u = String(u || '').trim(); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ''; }
+
+  function renderSnapshot(pd) {
+    const box = document.getElementById('ov-snapshot'), list = document.getElementById('ov-snapshot-list');
+    if (!box || !list) return;
+    const offers = (pd && pd.efOffers) || [];
+    if (!offers.length) { box.hidden = true; list.innerHTML = ''; return; }
+    const t0 = offers[0].top || {};
+    document.getElementById('ov-snapshot-period').textContent = t0.from ? `Last 90 days · ${_ovDate(t0.from)} – ${_ovDate(t0.to)}` : '';
+    const vis = { private: ['Private · ask your account manager', 'sn-tag--purple'], require_approval: ['Approval required', 'sn-tag--amber'], public: ['Open to all partners', ''] };
+    list.innerHTML = offers.map(o => {
+      const t = o.top || {}, ps = t.partners || [];
+      const epcs = ps.map(p => p.epc), crs = ps.map(p => p.cr);
+      const v = vis[o.visibility];
+      const tags = (v ? `<span class="sn-tag ${v[1]}">${_ovEsc(v[0])}</span>` : '') + (o.status && o.status !== 'active' ? `<span class="sn-tag">${_ovEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : '');
+      const epcVal = ps.length ? _ovMoney(Math.max(...epcs)) : '—';
+      const epcNote = ps.length ? `best partner · ${t.min_clicks}+ clicks, ${t.min_conversions}+ conversions` : 'not enough partner data yet';
+      const rev = /rev share/.test(t.default_payout || '');
+      const payVal = t.payout_min != null ? _ovRange(t.payout_min, t.payout_max, _ovMoney) : '—';
+      const payNote = (t.payout_min != null ? 'per conversion · ' : '') + (rev ? _ovEsc(t.default_payout) + ' · real payouts' : 'depends on traffic quality · ask your account manager');
+      const crVal = ps.length ? Math.max(...crs).toFixed(1) + '%' : '—';
+      const avg = t.avg_epc != null
+        ? `<p class="sn-avg">Network average across all traffic: <b>${_ovMoney(t.avg_epc)} EPC</b>. An average mixes every kind of traffic, so it's rarely what anyone earns — the top partner shows what good-fit traffic does.</p>`
+        : '';
+      const none = ps.length ? '' : `<p class="sn-avg">No partner has ${t.min_clicks}+ clicks and ${t.min_conversions}+ conversions on this offer in the last 90 days yet.</p>`;
+      const link = _ovEverflowLink(o.link);
+      return `<article class="sn-card">
+        <div class="sn-top"><div class="sn-name">${_ovEsc(o.name || ('Offer ' + o.id))}<span class="sn-id">ID ${_ovEsc(o.id)}</span></div>${tags ? `<div class="sn-tags">${tags}</div>` : ''}</div>
+        <div class="sn-tiles">
+          <div class="sn-tile sn-tile--hero"><div class="sn-tile-label">Top partner EPC</div><div class="sn-tile-value">${epcVal}</div><div class="sn-tile-note">${epcNote}</div></div>
+          <div class="sn-tile"><div class="sn-tile-label">Payout</div><div class="sn-tile-value">${payVal}</div><div class="sn-tile-note">${payNote}</div></div>
+          <div class="sn-tile"><div class="sn-tile-label">Top partner CR</div><div class="sn-tile-value">${crVal}</div><div class="sn-tile-note">${ps.length ? 'best conversion rate among those partners' : '&nbsp;'}</div></div>
+        </div>
+        ${avg}${none}
+        <div class="sn-actions">${link ? `<a class="sn-open" href="${_ovEsc(link)}" target="_blank" rel="noopener">Open offer in Everflow ↗</a>` : ''}<span class="sn-trust">Real Everflow numbers · updated daily</span></div>
+      </article>`;
+    }).join('');
+    box.hidden = false;
+  }
+
+  function renderInsights(pd) {
+    const box = document.getElementById('insights');
+    if (!box) return;
+    const ins = pd && pd.insights;
+    const fill = (id, bullets, full) => {
+      const card = document.getElementById(id);
+      const sections = Object.entries(full || {}).filter(([, t]) => t && t.trim());
+      card.hidden = !bullets.length && !sections.length;
+      card.querySelector('.ins-list').innerHTML = bullets.map(b => `<li>${_ovEsc(b)}</li>`).join('');
+      const more = card.querySelector('.ins-more');
+      more.hidden = !sections.length; more.open = !bullets.length;
+      more.querySelector('.ins-full').innerHTML = sections.map(([h, t]) =>
+        `<div><h3>${_ovEsc(h)}</h3>${t.split(/\n\s*\n|\n(?=- )/).map(p => `<p>${_ovEsc(p.trim())}</p>`).join('')}</div>`).join('');
+    };
+    if (!ins) { box.style.display = 'none'; return; }
+    fill('ins-todo', ins.todo || [], ins.todoFull);
+    fill('ins-working', ins.working || [], ins.workingFull);
+    box.style.display = document.getElementById('ins-working').hidden && document.getElementById('ins-todo').hidden ? 'none' : '';
+  }
+
+  // Proven creatives: the longest-running ads (advertisers stop losing ads fast), 6 at most
+  function renderProven(data) {
+    const box = document.getElementById('ov-proven'), grid = document.getElementById('ov-proven-grid');
+    if (!box || !grid) return;
+    // a creative is {t, url, thumb} (uploaded) or a plain link (older reports)
+    const mediaOf = c => c && typeof c === 'object' ? { url: _ovMediaUrl(c.url), thumb: _ovMediaUrl(c.thumb) } : { url: _ovMediaUrl(c), thumb: '' };
+    const ads = ((data && data.ads) || []).map((a, i) => ({ a, i, days: parseInt(String(a.lifecycle || '').replace(/[^\d]/g, ''), 10) || 0, ...mediaOf(a.creative) }))
+      .map(x => ({ ...x, media: x.url }))
+      .filter(x => x.media && x.days > 0).sort((x, y) => y.days - x.days).slice(0, 6);
+    if (!ads.length) { box.hidden = true; grid.innerHTML = ''; return; }
+    grid.innerHTML = ads.map(({ a, i, days, media, thumb }) => {
+      const video = /\/video\/upload\/|\.(mp4|mov|webm)(\?|$)/i.test(media);
+      const m = video ? `<video src="${_ovEsc(media)}#t=0.5" muted playsinline preload="metadata"></video>` : `<img src="${_ovEsc(thumb || media)}" alt="" loading="lazy">`;
+      const chips = [a.channel, a.format].filter(Boolean).map(c => `<span class="pc-chip">${_ovEsc(String(c).replace(/^./, ch => ch.toUpperCase()))}</span>`).join('');
+      return `<button type="button" class="pc-card" data-ad="${i}"><div class="pc-media">${m}</div><div class="pc-body">
+        <div class="pc-meta"><span class="pc-chip pc-chip--days">Running ${days} days</span>${chips}</div>
+        <div class="pc-head">${_ovEsc(a.headline || a.angle || a.title || '')}</div><span class="pc-more">More ›</span></div></button>`;
+    }).join('');
+    grid.querySelectorAll('.pc-card').forEach(b => b.addEventListener('click', () => { if (typeof openAdDetail === 'function') openAdDetail(+b.dataset.ad); }));
+    box.hidden = false;
+  }
+
+  // Top funnels, simplified: where the ads send people (funnels in Everflow first), 6 at most
+  function renderTopFunnels(data) {
+    const box = document.getElementById('ov-funnels'), list = document.getElementById('ov-funnels-list');
+    if (!box || !list) return;
+    const cap = v => String(v || '').replace(/-/g, ' ').replace(/^./, c => c.toUpperCase());
+    const host = u => { const m = /^https?:\/\/([^\/?#]+)/i.exec(String(u || '').trim()); return m ? m[1].replace(/^www\./, '') : ''; };
+    const rows = ((data && data.funnels) || []).map((f, i) => ({ f, i, d: host(f.link) })).filter(x => x.d)
+      .sort((x, y) => (y.f.everflow === 'ef-yes') - (x.f.everflow === 'ef-yes') || x.i - y.i).slice(0, 6);
+    if (!rows.length) { box.hidden = true; list.innerHTML = ''; return; }
+    list.innerHTML = rows.map(({ f, i, d }) => {
+      const ef = /^https:\/\/[a-z0-9.-]*everflowclient\.io\/[^\s"'<>]*$/i.test(f.efLink || '') ? f.efLink : '';
+      return `<div class="tf-row" role="button" tabindex="0" data-funnel="${i}">
+        <div class="tf-main"><div class="tf-domain">${_ovEsc(d)}</div><div class="tf-adv">${_ovEsc(f.advertiser || '')}</div></div>
+        ${f.type ? `<span class="tf-chip tf-chip--type">${_ovEsc(cap(f.type))}</span>` : '<span></span>'}
+        ${f.trafficSource ? `<span class="tf-chip">${_ovEsc(cap(f.trafficSource))}</span>` : '<span></span>'}
+        ${ef ? `<a class="tf-ef" href="${_ovEsc(ef)}" target="_blank" rel="noopener">Everflow ↗</a>` : '<span></span>'}
+        <span class="tf-more">More ›</span></div>`;
+    }).join('');
+    list.querySelectorAll('.tf-row').forEach(r => {
+      const go = e => { if (e.target.closest('a')) return; if (typeof openFunnelDetail === 'function') openFunnelDetail(+r.dataset.funnel); };
+      r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key === 'Enter') go(e); });
+    });
+    box.hidden = false;
+  }
+
+  function renderFullResearchBar(data) {
+    const c = document.getElementById('fr-count');
+    if (!c) return;
+    const n = k => ((data && data[k]) || []).filter(r => Object.entries(r).some(([key, v]) => key !== 'num' && String(v || '').trim())).length;
+    c.textContent = `${n('traffic')} channels · ${n('ads')} ads · ${n('funnels')} funnels`;
+  }
+
+  async function renderOverview(data) {
+    renderProven(data); renderTopFunnels(data); renderFullResearchBar(data);
+    const rows = await _ovReports();
+    const id = typeof _currentOfferId !== 'undefined' ? _currentOfferId : null;
+    const row = rows.find(r => r.id === id) || rows.find(r => r.data?.header?.title && r.data.header.title === data?.header?.title);
+    const pd = row ? row.data : null;
+    renderSnapshot(pd); renderInsights(pd);
+  }
+  function toggleFullResearch() {
+    const open = document.body.classList.toggle('fr-open');
+    const b = document.getElementById('fr-toggle');
+    if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open && typeof window.fitTableRows === 'function') setTimeout(window.fitTableRows, 60);
+  }
+  // sidebar wording and card labels for the affiliate-first layout
+  (function () {
+    const relabel = () => {
+      const set = (id, txt) => { const b = document.getElementById(id); if (!b) return; const t = [...b.childNodes].reverse().find(n => n.nodeType === 3 && n.textContent.trim()); if (t) t.textContent = ' ' + txt + '\n'; b.title = txt; };
+      set('nav-report', 'Overview'); set('nav-ads', 'Creatives');
+      document.querySelectorAll('.grid-card .gc-field-label').forEach(l => { if (l.textContent.trim() === 'Lifecycle') l.textContent = 'Days running'; });
+      document.querySelectorAll('.card-expand-label').forEach(l => { if (/Angle, Headline/.test(l.textContent)) l.textContent = 'More'; });
+    };
+    const boot = () => { relabel(); new MutationObserver(relabel).observe(document.getElementById('ads-grid') || document.body, { childList: true, subtree: true }); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  })();
+</script>
 <link rel="stylesheet" href="/creative-research-partners/vendor/n8n-chat-1.41.1/style.css">
 <style>
   /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
