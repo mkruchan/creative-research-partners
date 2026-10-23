@@ -6900,8 +6900,7 @@
   <!-- ── Overview (shared, build/internal/overview_sections.html): what top partners earn, how to start, proven creatives ── -->
   <section id="ov-snapshot" class="ov-sec" hidden aria-labelledby="ov-snapshot-title">
     <div class="ov-head">
-      <div><h2 class="ov-title" id="ov-snapshot-title">What top partners earn</h2>
-        <div class="ov-sub">The best partners on this offer, not an average of all traffic</div></div>
+      <div><h2 class="ov-title" id="ov-snapshot-title">What top partners earn</h2></div>
       <div class="ov-period" id="ov-snapshot-period"></div>
     </div>
     <div class="sn-list" id="ov-snapshot-list"></div>
@@ -6909,23 +6908,21 @@
 
   <section id="ov-proven" class="ov-sec" hidden aria-labelledby="ov-proven-title">
     <div class="ov-head">
-      <div><h2 class="ov-title" id="ov-proven-title">Proven creatives</h2>
-        <div class="ov-sub">The longest-running ads — advertisers switch losing ads off fast. Click one for the details and the file.</div></div>
+      <div><h2 class="ov-title" id="ov-proven-title">Proven creatives</h2></div>
     </div>
     <div class="pc-grid" id="ov-proven-grid"></div>
   </section>
 
   <section id="ov-funnels" class="ov-sec" hidden aria-labelledby="ov-funnels-title">
     <div class="ov-head">
-      <div><h2 class="ov-title" id="ov-funnels-title">Top funnels</h2>
-        <div class="ov-sub">Where the best ads send people. Click one for the details.</div></div>
+      <div><h2 class="ov-title" id="ov-funnels-title">Proven funnels</h2></div>
     </div>
-    <div class="tf-list" id="ov-funnels-list"></div>
+    <div class="tf-grid" id="ov-funnels-list"></div>
   </section>
 
   <div class="fr-bar" id="fr-bar">
     <div><b>Full research</b> <span class="fr-count" id="fr-count"></span></div>
-    <button type="button" id="fr-toggle" onclick="toggleFullResearch()" aria-expanded="false">Show how to start, channels, all ads &amp; funnels</button>
+    <button type="button" id="fr-toggle" onclick="toggleFullResearch()" aria-expanded="false">Open full research</button>
   </div>
 
   <!-- How to start / What's working: part of Full research -->
@@ -6942,6 +6939,7 @@
     </div>
   </section>
 
+  <!-- /overview sections -->
   <div class="ic-grid" id="ic-grid-notes">
 
     <!-- ── Creative Takeaways card ── -->
@@ -13045,7 +13043,8 @@ window.addEventListener('DOMContentLoaded', function() {
   .ov-sec { margin: 0 0 20px; padding: 20px; border-radius: 14px; background: var(--surface, #fff); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
   .ov-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
   .ov-title { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary); letter-spacing: -0.01em; }
-  .ov-sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 3px; }
+  .ov-sub, .ds-top-header-subtitle { display: none !important; }   /* no small text under the headers (owner, 2026-10-23) */
+  .ds-offer-card .oc-meta { display: none !important; }            /* no date / report period on top (the editor keeps them) */
   .ov-period { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px; background: var(--blue-bg); color: var(--blue-text); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
   .sn-list { display: flex; flex-direction: column; gap: 14px; }
   .sn-card { padding: 16px; border-radius: 12px; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 14px; }
@@ -13067,36 +13066,64 @@ window.addEventListener('DOMContentLoaded', function() {
   .sn-open { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 10px; background: var(--accent, #2563eb); color: #fff !important; font-weight: 600; font-size: 14px; text-decoration: none; }
   .sn-open:hover { background: var(--accent-hover, #1d4ed8); }
   .sn-trust { font-size: 12px; color: var(--text-muted); }
-  .pc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+  /* ad and funnel cards are the same size: same column width, square preview (owner, 2026-10-23) */
+  .pc-grid, .tf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
   .pc-card { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); cursor: pointer; text-align: left; padding: 0; font: inherit; color: inherit; transition: box-shadow .15s, transform .15s; }
   .pc-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
-  .pc-media { aspect-ratio: 1 / 1; background: var(--bg-tertiary); display: grid; place-items: center; overflow: hidden; }
+  .pc-media { position: relative; aspect-ratio: 1 / 1; background: var(--bg-tertiary); display: grid; place-items: center; overflow: hidden; }
+  /* video ads: a play sign on the preview */
+  .pc-play { position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 7px; border-radius: 999px;
+    background: rgba(0,0,0,.62); color: #fff; font-size: 11.5px; font-weight: 600; pointer-events: none; }
+  .pc-play svg { width: 12px; height: 12px; }
   .pc-media img, .pc-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .pc-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .pc-body, .tf-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .pc-meta { display: flex; gap: 6px; flex-wrap: wrap; }
-  .pc-chip { font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 2px 8px; background: var(--bg-tertiary); color: var(--text-secondary); }
-  .pc-chip--days { background: var(--teal-bg); color: var(--teal-text); }
+  .pc-chip, .tf-chip { font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 2px 8px; white-space: nowrap;
+    --c: #64748b; background: color-mix(in srgb, var(--c) 13%, transparent); color: color-mix(in srgb, var(--c) 88%, #000); }
+  body.force-dark .pc-chip, body.force-dark .tf-chip { background: color-mix(in srgb, var(--c) 26%, transparent); color: color-mix(in srgb, var(--c) 55%, #fff); }
+  /* channels */
+  .ovc-meta { --c: #2563eb; } .ovc-facebook { --c: #2563eb; } .ovc-instagram { --c: #c026d3; } .ovc-taboola { --c: #1e40af; }
+  .ovc-outbrain { --c: #ea580c; } .ovc-native { --c: #059669; } .ovc-mgid { --c: #db2777; } .ovc-revcontent { --c: #7c3aed; }
+  .ovc-newsbreak { --c: #e11d48; } .ovc-tiktok { --c: #111827; } .ovc-snapchat { --c: #ca8a04; } .ovc-google { --c: #16a34a; }
+  .ovc-search { --c: #16a34a; } .ovc-youtube { --c: #dc2626; } .ovc-pinterest { --c: #be123c; } .ovc-msn { --c: #0891b2; }
+  .ovc-email { --c: #0284c7; } .ovc-display { --c: #475569; } .ovc-twitter { --c: #0369a1; } .ovc-x { --c: #111827; }
+  /* formats */
+  .ovc-video { --c: #dc2626; } .ovc-static { --c: #0284c7; } .ovc-static-image { --c: #0284c7; } .ovc-image { --c: #0284c7; }
+  .ovc-native-article { --c: #65a30d; } .ovc-carousel { --c: #a21caf; } .ovc-gif { --c: #9333ea; }
+  /* funnel types */
+  .ovc-quiz { --c: #7c3aed; } .ovc-landing-page { --c: #2563eb; } .ovc-comparison { --c: #d97706; } .ovc-advertorial { --c: #db2777; }
+  .ovc-lead-gen { --c: #059669; } .ovc-vsl { --c: #dc2626; } .ovc-multi-step { --c: #4f46e5; } .ovc-direct-landing-page { --c: #2563eb; }
+  /* geo + days running */
+  .ovc-geo { --c: #0f766e; } .pc-chip--days { --c: #15803d; }
   .pc-head { font-size: 13px; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .tf-list { display: flex; flex-direction: column; gap: 8px; }
-  .tf-row { display: grid; grid-template-columns: minmax(0, 1.6fr) auto auto auto auto; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px;
-    background: var(--bg-primary, #fff); border: 1px solid var(--border-light); cursor: pointer; text-align: left; font: inherit; color: inherit; width: 100%; }
-  .tf-row:hover { box-shadow: var(--shadow-sm); }
-  .tf-main { min-width: 0; }
-  .tf-domain { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* funnel cards: page preview (daily screenshot in the media mirror, m/funnels/<preview>.jpg), domain, chips, links */
+  .tf-card { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); cursor: pointer; transition: box-shadow .15s, transform .15s; }
+  .tf-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .tf-shot { position: relative; aspect-ratio: 1 / 1; background: var(--bg-tertiary); overflow: hidden; }
+  .tf-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .tf-shot-ph { position: absolute; inset: 0; display: none; place-items: center; font-size: 13px; font-weight: 600; color: var(--text-muted); padding: 12px; text-align: center; }
+  .tf-shot--none img { display: none; } .tf-shot--none .tf-shot-ph { display: grid; }
+  .tf-domain { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tf-adv { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tf-chip { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; background: var(--bg-tertiary); color: var(--text-secondary); white-space: nowrap; }
-  .tf-chip--type { background: var(--purple-bg); color: var(--purple-text); }
-  .tf-ef { font-size: 12.5px; font-weight: 600; color: var(--accent, #2563eb) !important; text-decoration: none; white-space: nowrap; }
-  .tf-more, .pc-more { font-size: 12.5px; font-weight: 600; color: var(--accent, #2563eb); white-space: nowrap; }
-  @media (max-width: 760px) { .tf-row { grid-template-columns: 1fr auto; } .tf-row .tf-chip:not(.tf-chip--type) { display: none; } }
+  .tf-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tf-actions, .pc-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+  .tf-open, .tf-ef, .tf-more, .pc-more { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 8px;
+    font-size: 12.5px; font-weight: 600; white-space: nowrap; text-decoration: none; cursor: pointer;
+    border: 1px solid var(--border-mid, #d1d5db); background: var(--surface, #fff); color: var(--text-primary) !important; box-shadow: var(--shadow-xs, 0 1px 2px rgba(0,0,0,.05)); }
+  .tf-open:hover, .tf-more:hover, .pc-card:hover .pc-more { background: var(--bg-tertiary); }
+  .tf-ef { border-color: transparent; background: var(--accent, #2563eb); color: #fff !important; }
+  /* funnel card: Open page + More side by side, Everflow full width below; ad card: More */
+  .tf-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .tf-actions > * { justify-content: center; }
+  .tf-actions .tf-ef { grid-column: 1 / -1; order: 3; }
+  .tf-ef:hover { background: var(--accent-hover, #1d4ed8); }
   .fr-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 20px; padding: 14px 18px; border-radius: 14px; background: var(--surface, #fff); border: 1px dashed var(--border-mid); }
   .fr-bar button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border-light); background: var(--bg-tertiary); color: var(--text-primary); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
   .fr-count { font-size: 13px; color: var(--text-secondary); }
   /* the full research (channels, every ad, funnels, notes) stays out of the way on the overview until opened;
      the sidebar's Creatives / Funnels / Channels views always show their section */
-  body:not(.board-view):not(.fr-open) #section-traffic, body:not(.board-view):not(.fr-open) #section-ads,
-  body:not(.board-view):not(.fr-open) #section-funnels, body:not(.board-view):not(.fr-open) #ic-grid-notes,
-  body:not(.board-view):not(.fr-open) #insights { display: none !important; }
+  #section-traffic, #section-ads, #section-funnels, #ic-grid-notes, #fr-bar, #nav-ads, #nav-funnels { display: none !important; }
+  body.board-view #ov-snapshot, body.board-view #insights, body.board-view #ov-proven, body.board-view #ov-funnels { display: none !important; }
   body.board-view #ov-snapshot, body.board-view #insights, body.board-view #ov-proven, body.board-view #ov-funnels, body.board-view #fr-bar { display: none !important; }
   /* ad cards: creative, offer, landing, channel, format, geo, days running; "More" opens angle, headline, CTA, title, notes */
   /* Everflow links stand out (title button, funnel offer links, detail panel) */
@@ -13151,6 +13178,8 @@ window.addEventListener('DOMContentLoaded', function() {
   function _ovMoney(v) { return v == null ? '—' : '$' + (Math.round(v * 100) / 100).toFixed(v >= 100 ? 0 : 2).replace(/\.00$/, ''); }
   function _ovRange(a, b, fmt) { return a == null ? '—' : (a === b ? fmt(a) : `${fmt(a)} – ${fmt(b)}`); }
   function _ovEverflowLink(u) { return /^https:\/\/point2web\.everflowclient\.io\/affiliate\/offers\/\d+$/.test(u || '') ? u : ''; }
+  // colour class of a chip: channel, format, funnel type ('Native-article' -> ovc-native-article)
+  function _ovChip(v, extra) { const k = String(v || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); return (extra || '') + (k ? ' ovc-' + k : ''); }
   function _ovMediaUrl(u) { u = String(u || '').trim(); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ''; }
 
   function renderSnapshot(pd) {
@@ -13172,9 +13201,6 @@ window.addEventListener('DOMContentLoaded', function() {
       const payVal = t.payout_min != null ? _ovRange(t.payout_min, t.payout_max, _ovMoney) : '—';
       const payNote = (t.payout_min != null ? 'per conversion · ' : '') + (rev ? _ovEsc(t.default_payout) + ' · real payouts' : 'depends on traffic quality · ask your account manager');
       const crVal = ps.length ? Math.max(...crs).toFixed(1) + '%' : '—';
-      const avg = t.avg_epc != null
-        ? `<p class="sn-avg">Network average across all traffic: <b>${_ovMoney(t.avg_epc)} EPC</b>. An average mixes every kind of traffic, so it's rarely what anyone earns — the top partner shows what good-fit traffic does.</p>`
-        : '';
       const none = ps.length ? '' : `<p class="sn-avg">No partner has ${t.min_clicks}+ clicks and ${t.min_conversions}+ conversions on this offer in the last 90 days yet.</p>`;
       const link = _ovEverflowLink(o.link);
       return `<article class="sn-card">
@@ -13184,7 +13210,7 @@ window.addEventListener('DOMContentLoaded', function() {
           <div class="sn-tile"><div class="sn-tile-label">Payout</div><div class="sn-tile-value">${payVal}</div><div class="sn-tile-note">${payNote}</div></div>
           <div class="sn-tile"><div class="sn-tile-label">Top partner CR</div><div class="sn-tile-value">${crVal}</div><div class="sn-tile-note">${ps.length ? 'best conversion rate among those partners' : '&nbsp;'}</div></div>
         </div>
-        ${avg}${none}
+        ${none}
         <div class="sn-actions">${link ? `<a class="sn-open" href="${_ovEsc(link)}" target="_blank" rel="noopener">Open offer in Everflow ↗</a>` : ''}<span class="sn-trust">Real Everflow numbers · updated daily</span></div>
       </article>`;
     }).join('');
@@ -13211,50 +13237,78 @@ window.addEventListener('DOMContentLoaded', function() {
     box.style.display = document.getElementById('ins-working').hidden && document.getElementById('ins-todo').hidden ? 'none' : '';
   }
 
-  // Proven creatives: the longest-running ads (advertisers stop losing ads fast), 6 at most
+  // Proven creatives: the longest-running ads (advertisers stop losing ads fast), 15 at most
   function renderProven(data) {
     const box = document.getElementById('ov-proven'), grid = document.getElementById('ov-proven-grid');
     if (!box || !grid) return;
     // a creative is {t, url, thumb} (uploaded) or a plain link (older reports)
     const mediaOf = c => c && typeof c === 'object' ? { url: _ovMediaUrl(c.url), thumb: _ovMediaUrl(c.thumb) } : { url: _ovMediaUrl(c), thumb: '' };
-    const ads = ((data && data.ads) || []).map((a, i) => ({ a, i, days: parseInt(String(a.lifecycle || '').replace(/[^\d]/g, ''), 10) || 0, ...mediaOf(a.creative) }))
+    // days running = the FIRST number of the lifecycle text ('178 days (since 26 Apr)' -> 178, '<1 day' -> 0)
+    const ads = ((data && data.ads) || []).map((a, i) => ({ a, i, days: parseInt((String(a.lifecycle || '').match(/\d+/) || ['0'])[0], 10) || 0, ...mediaOf(a.creative) }))
       .map(x => ({ ...x, media: x.url }))
-      .filter(x => x.media && x.days > 0).sort((x, y) => y.days - x.days).slice(0, 6);
+      .filter(x => x.media && x.days > 0).sort((x, y) => y.days - x.days).slice(0, 15);
     if (!ads.length) { box.hidden = true; grid.innerHTML = ''; return; }
     grid.innerHTML = ads.map(({ a, i, days, media, thumb }) => {
       const video = /\/video\/upload\/|\.(mp4|mov|webm)(\?|$)/i.test(media);
       const m = video ? `<video src="${_ovEsc(media)}#t=0.5" muted playsinline preload="metadata"></video>` : `<img src="${_ovEsc(thumb || media)}" alt="" loading="lazy">`;
-      const chips = [a.channel, a.format].filter(Boolean).map(c => `<span class="pc-chip">${_ovEsc(String(c).replace(/^./, ch => ch.toUpperCase()))}</span>`).join('');
-      return `<button type="button" class="pc-card" data-ad="${i}"><div class="pc-media">${m}</div><div class="pc-body">
+      const chips = [a.channel, a.format].filter(Boolean).map(c => `<span class="${_ovChip(c, 'pc-chip')}">${_ovEsc(String(c).replace(/-/g, ' ').replace(/^./, ch => ch.toUpperCase()))}</span>`).join('');
+      const play = video ? '<span class="pc-play" aria-label="Video"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-icon="play"><path d="M6 4v16l14-8z"/></svg>Video</span>' : '';
+      return `<button type="button" class="pc-card" data-ad="${i}"><div class="pc-media">${m}${play}</div><div class="pc-body">
         <div class="pc-meta"><span class="pc-chip pc-chip--days">Running ${days} days</span>${chips}</div>
-        <div class="pc-head">${_ovEsc(a.headline || a.angle || a.title || '')}</div><span class="pc-more">More ›</span></div></button>`;
+        <div class="pc-head">${_ovEsc(a.headline || a.angle || a.title || '')}</div><div class="pc-actions"><span class="pc-more">More ›</span></div></div></button>`;
     }).join('');
     grid.querySelectorAll('.pc-card').forEach(b => b.addEventListener('click', () => { if (typeof openAdDetail === 'function') openAdDetail(+b.dataset.ad); }));
     box.hidden = false;
   }
 
-  // Top funnels, simplified: where the ads send people (funnels in Everflow first), 6 at most
+  // Proven funnels: the pages that lead to this offer, as cards with a page preview (screenshot taken daily by
+  // tools/funnel_previews.py into the media mirror; a page without one shows its domain instead)
+  const _OV_MEDIA = 'https://mkruchan.github.io/creative-research-media/m/';
+  function _ovPreviewUrl(f) { return /^[0-9a-f]{16}$/.test(f.preview || '') ? _OV_MEDIA + 'funnels/' + f.preview + '.jpg' : ''; }
+  // The partner-safe reports carry the preview key; a raw report (internal site) does not, so it is derived the same
+  // way: sha1 of the bare link (no query/fragment), first 16 hex chars — partner_aux.note_key(bare_url(link)).
+  function _ovBareLink(u) { u = String(u || '').trim(); return u.startsWith('http') ? u.split(/[?#]/)[0].split(/%20\(|\s/)[0] : u; }
+  async function _ovDeriveKey(link) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return '';
+    const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(_ovBareLink(link).trim()));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+  }
   function renderTopFunnels(data) {
     const box = document.getElementById('ov-funnels'), list = document.getElementById('ov-funnels-list');
     if (!box || !list) return;
     const cap = v => String(v || '').replace(/-/g, ' ').replace(/^./, c => c.toUpperCase());
     const host = u => { const m = /^https?:\/\/([^\/?#]+)/i.exec(String(u || '').trim()); return m ? m[1].replace(/^www\./, '') : ''; };
     const rows = ((data && data.funnels) || []).map((f, i) => ({ f, i, d: host(f.link) })).filter(x => x.d)
-      .sort((x, y) => (y.f.everflow === 'ef-yes') - (x.f.everflow === 'ef-yes') || x.i - y.i).slice(0, 6);
+      .sort((x, y) => (y.f.everflow === 'ef-yes') - (x.f.everflow === 'ef-yes') || x.i - y.i).slice(0, 5);
     if (!rows.length) { box.hidden = true; list.innerHTML = ''; return; }
     list.innerHTML = rows.map(({ f, i, d }) => {
       const ef = /^https:\/\/[a-z0-9.-]*everflowclient\.io\/[^\s"'<>]*$/i.test(f.efLink || '') ? f.efLink : '';
-      return `<div class="tf-row" role="button" tabindex="0" data-funnel="${i}">
-        <div class="tf-main"><div class="tf-domain">${_ovEsc(d)}</div><div class="tf-adv">${_ovEsc(f.advertiser || '')}</div></div>
-        ${f.type ? `<span class="tf-chip tf-chip--type">${_ovEsc(cap(f.type))}</span>` : '<span></span>'}
-        ${f.trafficSource ? `<span class="tf-chip">${_ovEsc(cap(f.trafficSource))}</span>` : '<span></span>'}
-        ${ef ? `<a class="tf-ef" href="${_ovEsc(ef)}" target="_blank" rel="noopener">Everflow ↗</a>` : '<span></span>'}
-        <span class="tf-more">More ›</span></div>`;
+      const page = _ovMediaUrl(f.link), shot = _ovPreviewUrl(f);
+      const chips = [[f.type, _ovChip(f.type, 'tf-chip')], [f.trafficSource, _ovChip(f.trafficSource, 'tf-chip')], [f.geo, 'tf-chip ovc-geo']].filter(c => c[0])
+        .map(([v, cls]) => `<span class="${cls}">${_ovEsc(cap(v))}</span>`).join('');
+      return `<div class="tf-card" role="button" tabindex="0" data-funnel="${i}">
+        <div class="tf-shot${shot ? '' : ' tf-shot--none'}">${shot ? `<img src="${_ovEsc(shot)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('tf-shot--none')">` : ''}<div class="tf-shot-ph">${_ovEsc(d)}</div></div>
+        <div class="tf-body"><div class="tf-domain">${_ovEsc(d)}</div><div class="tf-adv">${_ovEsc(f.advertiser || '')}</div>
+          ${chips ? `<div class="tf-meta">${chips}</div>` : ''}
+          <div class="tf-actions">${page ? `<a class="tf-open" href="${_ovEsc(page)}" target="_blank" rel="noopener">Open page ↗</a>` : ''}${ef ? `<a class="tf-ef" href="${_ovEsc(ef)}" target="_blank" rel="noopener">Everflow ↗</a>` : ''}<span class="tf-more">More ›</span></div></div></div>`;
     }).join('');
-    list.querySelectorAll('.tf-row').forEach(r => {
+    list.querySelectorAll('.tf-card').forEach(r => {
       const go = e => { if (e.target.closest('a')) return; if (typeof openFunnelDetail === 'function') openFunnelDetail(+r.dataset.funnel); };
       r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key === 'Enter') go(e); });
     });
+    // raw reports: derive the preview key and add the screenshot when the mirror has one
+    rows.filter(({ f }) => !f.preview && _ovMediaUrl(f.link)).forEach(({ f, i }) => _ovDeriveKey(f.link).then(key => {
+      if (!key) return;
+      f.preview = key;
+      const shot = list.querySelector(`.tf-card[data-funnel="${i}"] .tf-shot`);
+      if (!shot || shot.querySelector('img')) return;
+      // show the image area first: a lazy image inside the hidden placeholder (display: none) would never load
+      const img = document.createElement('img'); img.alt = ''; img.loading = 'lazy';
+      img.onerror = () => shot.classList.add('tf-shot--none');
+      shot.classList.remove('tf-shot--none');
+      img.src = _ovPreviewUrl(f);
+      shot.prepend(img);
+    }).catch(() => {}));
     box.hidden = false;
   }
 
@@ -13276,7 +13330,7 @@ window.addEventListener('DOMContentLoaded', function() {
   function toggleFullResearch() {
     const open = document.body.classList.toggle('fr-open');
     const b = document.getElementById('fr-toggle');
-    if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (b) { b.setAttribute('aria-expanded', open ? 'true' : 'false'); b.textContent = open ? 'Hide full research' : 'Open full research'; }
     if (open && typeof window.fitTableRows === 'function') setTimeout(window.fitTableRows, 60);
   }
   // sidebar wording and card labels for the affiliate-first layout
@@ -13291,6 +13345,7 @@ window.addEventListener('DOMContentLoaded', function() {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   })();
 </script>
+<!-- /overview -->
 <link rel="stylesheet" href="/creative-research-partners/vendor/n8n-chat-1.41.1/style.css">
 <style>
   /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
