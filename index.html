@@ -66,6 +66,8 @@
 
     /* the editable takeaway/recommendation cards are not part of the partner edition (the overview has the summaries) */
     #ic-grid-notes { display: none !important; }
+    /* the Offers / Verticals tabs of the report list: partners only get offer research (every report here is one offer) */
+    #offers-panel-tabs { display: none !important; }
     /* affiliates don't need the export menu (the editor and share copy keep it for the team) */
     #nav-export { display: none !important; }
   </style>
@@ -6631,6 +6633,17 @@
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="search"><path d="m21 21-4.34-4.34"/> <circle cx="11" cy="11" r="8"/></svg>
     <input type="text" id="offers-panel-search-input" placeholder="Search offers…" oninput="filterOffersList(this.value)">
   </div>
+  <div class="offers-panel-tabs" id="offers-panel-tabs" role="tablist" aria-label="Research">
+    <button type="button" role="tab" data-k="offer" aria-selected="true" onclick="setOffersKind('offer')">Offers <span id="offers-n-offer"></span></button>
+    <button type="button" role="tab" data-k="vertical" aria-selected="false" onclick="setOffersKind('vertical')">Verticals <span id="offers-n-vertical"></span></button>
+  </div>
+  <style>
+    .offers-panel-tabs { display: flex; gap: 2px; margin: 8px 12px 0; padding: 3px; border-radius: 10px; background: var(--bg-tertiary, #f3f4f6); flex-shrink: 0; }
+    .offers-panel-tabs button { flex: 1; font: inherit; font-size: 13px; font-weight: 600; padding: 6px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text-secondary, #6b7280); cursor: pointer; }
+    .offers-panel-tabs button[aria-selected="true"] { background: var(--surface, #fff); color: var(--text-primary, #111827); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+    .offers-panel-tabs span { font-size: 11.5px; font-weight: 600; color: var(--text-muted, #9ca3af); margin-left: 3px; }
+    .offers-panel-tabs button:focus-visible { outline: 2px solid var(--accent, #2563eb); outline-offset: 1px; }
+  </style>
   <div class="offers-panel-list" id="offers-panel-list">
     <div class="offers-panel-empty">Loading offers…</div>
   </div>
@@ -9350,6 +9363,9 @@ function closeOffersPanel() {
   setTabAndUpdateUrl('report');
 }
 function renderOffersList(filter) {
+  if (!window._offersKind && typeof _currentOfferId !== 'undefined' && window._offerKindOf) {
+    const cur = (typeof _allOffers !== 'undefined' ? _allOffers : []).find(o => o.id === _currentOfferId); if (cur) window._offersKind = window._offerKindOf(cur);
+  }
   const list = document.getElementById('offers-panel-list');
   if (!list) return;
   let offers = (typeof _allOffers !== 'undefined' ? _allOffers : []);
@@ -9366,7 +9382,7 @@ function renderOffersList(filter) {
     list.innerHTML = '<div class="offers-panel-empty">No offers found.<br>Create one with + New offer.</div>';
     return;
   }
-  list.innerHTML = offers.map(o => {
+  const _item = o => {
     const initials = o.name.split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase() || 'O';
     const isActive = (typeof _currentOfferId !== 'undefined' && o.id === _currentOfferId) || o.id === '__local__';
     const date = (() => {
@@ -9400,8 +9416,15 @@ function renderOffersList(filter) {
         <div class="offers-panel-item-meta">${_esc(date)}</div>
       </div>
     </div>`;
-  }).join('');
+  };
+  const _kind = o => 'offer';   // partner edition: offer research only
+  window._offerKindOf = _kind;
+  const k = window._offersKind || 'offer', g = offers.filter(o => _kind(o) === k);
+  ['offer', 'vertical'].forEach(x => { const n = document.getElementById('offers-n-' + x); if (n) n.textContent = offers.filter(o => _kind(o) === x).length;
+    const b = document.querySelector('#offers-panel-tabs [data-k="' + x + '"]'); if (b) b.setAttribute('aria-selected', x === k ? 'true' : 'false'); });
+  list.innerHTML = g.length ? g.map(_item).join('') : '<div class="offers-panel-empty">' + (k === 'offer' ? 'No offer research' : 'No vertical research') + (filter ? ' matches the search.' : ' yet.') + '</div>';
 }
+function setOffersKind(k) { window._offersKind = k; renderOffersList(document.getElementById('offers-panel-search-input')?.value || ''); }
 function filterOffersList(val) { renderOffersList(val); }
 async function selectOfferFromPanel(id) {
   closeOffersPanel();
@@ -11746,7 +11769,7 @@ function _partnerQuery(table) {
         let rows = (await _partnerOffers()).slice();
         filters.forEach(([k, v]) => { rows = rows.filter(r => String(r[k]) === String(v)); });
         if (order) { const [k, asc] = order; rows.sort((a, b) => (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * (asc ? 1 : -1)); }
-        if (cols !== '*') rows = rows.map(r => { const o = {}; cols.split(',').forEach(c => { c = c.trim(); if (c === 'data->meta->date') o.date = r.data?.meta?.date; else o[c] = r[c]; }); return o; });
+        if (cols !== '*') rows = rows.map(r => { const o = {}; cols.split(',').forEach(c => { c = c.trim(); if (c === 'data->meta->date') o.date = r.data?.meta?.date; else if (c.startsWith('titleUrl:')) o.titleUrl = r.data?.header?.titleUrl || ''; else if (c.startsWith('kind:')) o.kind = 'offer'; else o[c] = r[c]; }); return o; });
         return { data: single ? (rows[0] || null) : rows, error: null };
       })().then(ok, fail);
     }
@@ -11852,7 +11875,7 @@ async function offerLoadAll() {
   if (window._loaderSetStatus) window._loaderSetStatus('Connecting...');
   if (!sb) { offerRebuildSelect(); if (window._loaderDone) window._loaderDone(); return; }
   if (window._loaderSetStatus) window._loaderSetStatus('Loading offers...');
-  const { data, error } = await sb.from('offers').select('id,name,updated_at,data->meta->date').order('updated_at', { ascending: false });
+  const { data, error } = await sb.from('offers').select('id,name,updated_at,data->meta->date,titleUrl:data->header->>titleUrl,kind:data->meta->>kind').order('updated_at', { ascending: false });
   if (error) { console.error('offerLoadAll:', error); showToast('Failed to load offers: ' + error.message, 'error'); return; }
   _allOffers = data || [];
 
@@ -11868,7 +11891,7 @@ async function offerLoadAll() {
       if (!err && row) {
         _currentOfferId = row.id;
         localStorage.setItem(SB_OFFER_KEY, row.id);
-        const { data: fresh } = await sb.from('offers').select('id,name,updated_at,data->meta->date').order('updated_at', { ascending: false });
+        const { data: fresh } = await sb.from('offers').select('id,name,updated_at,data->meta->date,titleUrl:data->header->>titleUrl,kind:data->meta->>kind').order('updated_at', { ascending: false });
         _allOffers = fresh || [];
         showToast('✅ First offer created: "' + title + '"', 'success');
       }
@@ -13191,7 +13214,7 @@ window.addEventListener('DOMContentLoaded', function() {
   .ins-full p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.55; color: var(--text-primary); }
   .ins-card[hidden] { display: none !important; }
   /* read-only pages: How to start / What's working on the overview; the four notes cards are gone (the editor keeps them) */
-  body.ins-on-overview:not(.board-view) #insights:not([style*="none"]) { display: grid !important; }
+  body.ins-on-overview:not(.board-view):not(.opps-view) #insights:not([style*="none"]) { display: grid !important; }   /* never on Opportunities */
   body.ins-on-overview #ic-grid-notes { display: none !important; }
   @media (max-width: 860px) { .ins { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
