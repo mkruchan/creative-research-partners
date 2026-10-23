@@ -35,6 +35,17 @@
     }, true);
   })();
 </script>
+  <link rel="preload" href="/creative-research-partners/vendor/manrope-5.3.0/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <style id="font-manrope">
+    @font-face { font-family: 'Manrope'; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/creative-research-partners/vendor/manrope-5.3.0/manrope-latin-wght-normal.woff2) format('woff2');
+      unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/creative-research-partners/vendor/manrope-5.3.0/manrope-latin-ext-wght-normal.woff2) format('woff2');
+      unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/creative-research-partners/vendor/manrope-5.3.0/manrope-cyrillic-wght-normal.woff2) format('woff2');
+      unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+    body { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    button, input, textarea, select { font-family: inherit; }
+  </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Creative Research for Partners</title>
 <script>
@@ -274,7 +285,7 @@
        BASE
     ═══════════════════════════════════════════════ */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: #ffffff;
       color: var(--text-primary);
       min-height: 100vh;
@@ -3314,7 +3325,7 @@
     .section-title,
     .oc-label,
     .oc-meta-label {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
     }
     /* ═══════════════════════════════════════════════════════
        REFERENCE MATCH — CSS-only visual overrides
@@ -4397,7 +4408,7 @@
     /* ══ AD DETAIL PANEL — design polish ══ */
 
     /* Panel layout */
-    #ad-detail-panel { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, sans-serif; }
+    #ad-detail-panel { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, sans-serif; }
 
     /* ── Scrollbars inside ad-detail-panel — match horizontal table-scroll style ── */
     #ad-detail-panel ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -5425,7 +5436,7 @@
       padding: 0 20px !important;
       font-size: 13px !important;
       font-weight: 500 !important;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
       border: none !important;
       border-radius: 8px !important;
       cursor: pointer !important;
@@ -6868,7 +6879,7 @@
           <input type="hidden" id="meta-date">
         </div>
         <!-- Custom calendar popup — fixed position to escape card overflow -->
-        <div id="custom-cal" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px;min-width:240px;font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text',sans-serif;">
+        <div id="custom-cal" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px;min-width:240px;font-family:'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text',sans-serif;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <button onclick="calNav(-1)" style="background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:16px;color:#475569;">‹</button>
             <span id="cal-month-label" style="font-size:13px;font-weight:600;color:#0f172a;"></span>
@@ -13350,7 +13361,7 @@ window.addEventListener('DOMContentLoaded', function() {
 <style>
   /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
   #n8n-chat {
-    --chat--font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    --chat--font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     --chat--color--primary: var(--accent); --chat--color--primary-shade-50: var(--accent-hover); --chat--color--primary--shade-100: var(--accent-hover);
     --chat--color--secondary: var(--accent); --chat--color-secondary-shade-50: var(--accent-hover);
     --chat--color-white: var(--surface); --chat--color-light: var(--bg-secondary); --chat--color-light-shade-50: var(--bg-tertiary);
@@ -13446,21 +13457,17 @@ window.addEventListener('DOMContentLoaded', function() {
 <script type="module">
   import { createChat } from '/creative-research-partners/vendor/n8n-chat-1.41.1/chat.bundle.es.js';
 
-  // First message lists example questions; the first ones follow the offer that is open on the page
-  const titleNow = () => (document.getElementById('main-title')?.textContent || '').trim();
-  const waitForTitle = async () => { for (let i = 0; i < 30 && !titleNow(); i++) await new Promise(r => setTimeout(r, 100)); return titleNow(); };
-  const t = await waitForTitle();
-  const o = t ? t.split(/\s+-\s+|\s*\(/)[0].trim() : 'Quicken Refi';
+  // First message lists example questions; generic on purpose — no offer names (owner, 2026-10-23)
   const hello = [
     `Hi! I know the research behind every offer on this site: top ads, angles, funnels, traffic sources and how each offer converts.`,
     ``,
     `**You can ask me, for example:**`,
-    `- Which angles work best for ${o}?`,
-    `- Which ${o} ads have run the longest?`,
-    `- How does ${o} convert: CR and EPC?`,
-    `- Video or static: what wins for ${o}?`,
+    `- Which angles work best for this offer?`,
+    `- Which ads have run the longest?`,
+    `- How does this offer convert: CR and EPC?`,
+    `- Video or static: what wins here?`,
     `- Which traffic sources should I test first?`,
-    `- Write 3 hooks for ${o} based on the top ads`,
+    `- Write 3 hooks based on the top ads`,
     `- Which offers have the best EPC right now?`,
     `- Which offers work on native (Taboola, Outbrain)?`,
   ].join('\n');
