@@ -35,13 +35,8 @@
     }, true);
   })();
 </script>
-  <link rel="preload" href="/creative-research-partners/vendor/dm-sans-5.2.8/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <style id="font-dm-sans">
-    @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url(/creative-research-partners/vendor/dm-sans-5.2.8/dm-sans-latin-wght-normal.woff2) format('woff2');
-      unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-    @font-face { font-family: 'DM Sans'; font-style: normal; font-display: swap; font-weight: 100 1000; src: url(/creative-research-partners/vendor/dm-sans-5.2.8/dm-sans-latin-ext-wght-normal.woff2) format('woff2');
-      unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-    body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  <style id="font-system">
+    body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif; }
     button, input, textarea, select { font-family: inherit; }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -283,7 +278,7 @@
        BASE
     ═══════════════════════════════════════════════ */
     body {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: #ffffff;
       color: var(--text-primary);
       min-height: 100vh;
@@ -389,7 +384,7 @@
       background: var(--blue-bg);
       color: var(--blue-text);
       letter-spacing: 0.04em;
-      text-transform: uppercase;
+      text-transform: none;
     }
 
     /* ═══════════════════════════════════════════════
@@ -411,7 +406,7 @@
       font-size: 10px;
       font-weight: 600;
       color: #9ca3af;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.07em;
       margin-bottom: 5px;
     }
@@ -692,7 +687,7 @@
       padding: 9px 10px;
       font-size: 10px; font-weight: 600;
       color: #9ca3af;
-      text-transform: uppercase; letter-spacing: 0.07em;
+      text-transform: none; letter-spacing: 0.07em;
       border-bottom: 1px solid var(--border-light);
       background: var(--bg-secondary);
       white-space: nowrap; overflow: visible;
@@ -1222,7 +1217,7 @@
     .adp-section-title {
       font-size: 13px;
       font-weight: 700;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.08em;
       color: #111827;
     }
@@ -1233,7 +1228,7 @@
     /* Detail rows */
     .adp-row { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-bottom: 1px solid var(--border-light); }
     .adp-row:last-child { border-bottom: none; }
-    .adp-row-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7280; width: 90px; flex-shrink: 0; }
+    .adp-row-label { font-size: 10px; font-weight: 700; text-transform: none; letter-spacing: 0.08em; color: #6b7280; width: 90px; flex-shrink: 0; }
     .adp-row-val { flex: 1; min-width: 0; font-size: 12px; color: var(--text-primary); }
     .adp-row-edit { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
     .adp-row-input {
@@ -1266,7 +1261,7 @@
     .adp-lp-row:last-child { border-bottom: none; }
     .adp-lp-icon { width: 22px; height: 22px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
     .adp-lp-info { flex: 1; min-width: 0; }
-    .adp-lp-type { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ca3af; margin-bottom: 2px; }
+    .adp-lp-type { font-size: 10px; font-weight: 600; text-transform: none; letter-spacing: 0.06em; color: #9ca3af; margin-bottom: 2px; }
     .adp-lp-url { font-size: 11px; color: var(--accent); text-decoration: none; display: flex; align-items: flex-start; gap: 4px; }
     .adp-lp-url:hover { text-decoration: underline; }
     .adp-lp-url-text { word-break: break-all; flex: 1; min-width: 0; }
@@ -1276,7 +1271,7 @@
     /* Copy fields */
     .adp-copy-item { margin-bottom: 6px; }
     .adp-copy-item:last-child { margin-bottom: 0; }
-    .adp-copy-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 2px; }
+    .adp-copy-label { font-size: 10px; font-weight: 600; text-transform: none; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 2px; }
     .adp-copy-block {
       background: var(--bg-secondary);
       border: 1px solid var(--border-light);
@@ -1587,7 +1582,7 @@
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
+      text-transform: none;
       color: #9ca3af;
       margin-bottom: 6px;
     }
@@ -1631,7 +1626,7 @@
     .md-section-label {
       font-size: 11px; font-weight: 700;
       color: var(--text-secondary);
-      text-transform: uppercase; letter-spacing: 0.06em;
+      text-transform: none; letter-spacing: 0.06em;
     }
     .md-section-desc {
       font-size: 12px; color: var(--text-secondary);
@@ -1846,7 +1841,7 @@
     .dp-new-header {
       font-size: 11px; font-weight: 700;
       color: #9ca3af;
-      text-transform: uppercase; letter-spacing: 0.08em;
+      text-transform: none; letter-spacing: 0.08em;
       margin-bottom: 12px;
     }
     .dp-new-input {
@@ -2434,7 +2429,7 @@
       flex-wrap: wrap;
     }
     .oc-title-group { flex: 1; min-width: 0; }
-    .oc-label { font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; }
+    .oc-label { font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: none; color: #9ca3af; margin-bottom: 8px; }
     .oc-title-row { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
     h1#main-title {
       font-size: 22px !important; font-weight: 700 !important;
@@ -2459,7 +2454,7 @@
     }
     .oc-meta-field { flex: 1; min-width: 140px; padding: 16px 24px; display: flex; flex-direction: column; gap: 5px; }
     .oc-meta-sep { width: 1px; background: #e5e7eb; flex-shrink: 0; margin: 10px 0; }
-    .oc-meta-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #9ca3af; }
+    .oc-meta-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: none; color: #9ca3af; }
     .oc-meta-input { background: transparent !important; border: none !important; border-bottom: 1.5px solid transparent !important; border-radius: 0 !important; padding: 2px 0 !important; font-size: 14px !important; font-weight: 500 !important; color: #111827 !important; outline: none !important; width: 100% !important; font-family: inherit !important; transition: border-color .15s !important; }
     .oc-meta-input:hover { border-bottom-color: #d1d5db !important; }
     .oc-meta-input:focus { border-bottom-color: #2563eb !important; }
@@ -3142,7 +3137,7 @@
       grid-row: unset !important;
     }
     .oc-title-group { flex: 1 !important; min-width: 0 !important; }
-    .oc-label { font-size: 10px !important; font-weight: 700 !important; letter-spacing: .09em !important; text-transform: uppercase !important; color: #9ca3af !important; margin-bottom: 8px !important; }
+    .oc-label { font-size: 10px !important; font-weight: 700 !important; letter-spacing: .09em !important; text-transform: none !important; color: #9ca3af !important; margin-bottom: 8px !important; }
     /* Main title — kill link underline */
     h1#main-title {
       font-size: 20px !important; font-weight: 700 !important;
@@ -3191,7 +3186,7 @@
       width: auto !important;
     }
     .oc-meta-sep { width: 1px !important; background: #e9ebee !important; flex-shrink: 0 !important; margin: 0 !important; display: block !important; }
-    .oc-meta-label { font-size: 10px !important; font-weight: 700 !important; letter-spacing: .09em !important; text-transform: uppercase !important; color: #9ca3af !important; }
+    .oc-meta-label { font-size: 10px !important; font-weight: 700 !important; letter-spacing: .09em !important; text-transform: none !important; color: #9ca3af !important; }
     .oc-meta-input {
       background: transparent !important; border: none !important;
       border-bottom: 1.5px solid transparent !important;
@@ -3251,7 +3246,7 @@
     thead th {
       background: #ffffff !important;
       font-size: 11px !important; font-weight: 600 !important;
-      text-transform: uppercase !important; letter-spacing: 0.06em !important;
+      text-transform: none !important; letter-spacing: 0.06em !important;
       color: #9ca3af !important; padding: 10px 14px !important;
       text-align: left !important; white-space: nowrap !important;
       overflow: visible !important;
@@ -3323,7 +3318,7 @@
     .section-title,
     .oc-label,
     .oc-meta-label {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
     }
     /* ═══════════════════════════════════════════════════════
        REFERENCE MATCH — CSS-only visual overrides
@@ -3530,7 +3525,7 @@
       font-size: 10px !important;
       font-weight: 700 !important;
       letter-spacing: .08em !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       color: #9ca3af !important;
       margin-bottom: 2px !important;
     }
@@ -3681,7 +3676,7 @@
       width: 32px; height: 32px; border-radius: 8px;
       background: #f3f4f6; color: #6b7280;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      font-size: 11px; font-weight: 700; text-transform: none;
     }
     .offers-panel-item.active .offers-panel-item-icon { background: #dbeafe; color: #2563eb; }
     .offers-panel-item-info { flex: 1; min-width: 0; }
@@ -3794,7 +3789,7 @@
       background: #ffffff !important;
       font-size: 10.5px !important;
       font-weight: 600 !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       letter-spacing: 0.07em !important;
       color: #475569 !important;
       padding: 10px 14px !important;
@@ -4095,7 +4090,7 @@
       content: 'Actions' !important;
       font-size: 10.5px !important;
       font-weight: 600 !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       letter-spacing: 0.07em !important;
       color: #6b7280 !important;
     }
@@ -4104,7 +4099,7 @@
     #funnels-table thead th {
       font-size: 10.5px !important;
       font-weight: 600 !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       letter-spacing: 0.07em !important;
       color: #9ca3af !important;
     }
@@ -4406,7 +4401,7 @@
     /* ══ AD DETAIL PANEL — design polish ══ */
 
     /* Panel layout */
-    #ad-detail-panel { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, sans-serif; }
+    #ad-detail-panel { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, sans-serif; }
 
     /* ── Scrollbars inside ad-detail-panel — match horizontal table-scroll style ── */
     #ad-detail-panel ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -4529,7 +4524,7 @@
     .adp-section-title {
       font-size: 11.5px !important;
       font-weight: 700 !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       letter-spacing: 0.09em !important;
       color: #111827 !important;
     }
@@ -4551,7 +4546,7 @@
     .adp-row-label {
       font-size: 10px !important;
       font-weight: 600 !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       letter-spacing: 0.08em !important;
       color: #9ca3af !important;
       width: 80px !important;
@@ -4566,7 +4561,7 @@
     .adp-copy-label {
       font-size: 10px !important;
       font-weight: 600 !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       letter-spacing: 0.08em !important;
       color: #9ca3af !important;
       margin-bottom: 2px !important;
@@ -4973,7 +4968,7 @@
       font-weight: var(--label-weight) !important;
       letter-spacing: var(--label-spacing) !important;
       color: var(--label-color) !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       display: block !important;
       margin-bottom: 4px !important;
     }
@@ -5434,7 +5429,7 @@
       padding: 0 20px !important;
       font-size: 13px !important;
       font-weight: 500 !important;
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
       border: none !important;
       border-radius: 8px !important;
       cursor: pointer !important;
@@ -5899,7 +5894,7 @@
       font-size: 12px !important;
       font-weight: 700 !important;
       color: #0f172a !important;
-      text-transform: uppercase !important;
+      text-transform: none !important;
       letter-spacing: 0.07em !important;
     }
     .md-badge {
@@ -6877,7 +6872,7 @@
           <input type="hidden" id="meta-date">
         </div>
         <!-- Custom calendar popup — fixed position to escape card overflow -->
-        <div id="custom-cal" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px;min-width:240px;font-family:'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Text',sans-serif;">
+        <div id="custom-cal" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px;min-width:240px;font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text',sans-serif;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <button onclick="calNav(-1)" style="background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:16px;color:#475569;">‹</button>
             <span id="cal-month-label" style="font-size:13px;font-weight:600;color:#0f172a;"></span>
@@ -7519,7 +7514,7 @@ function buildTrafficGrid() {
       `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`
     ).join('');
     return `<div class="card-chip-field" style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
+      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
       <span class="card-chip-wrap" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
         <span class="card-chip-display">${chipHtml}</span>
         <select class="card-chip-select" data-row="${rowIdx}" data-table="${tableId}" data-tdidx="${tdIdx}"
@@ -7532,14 +7527,14 @@ function buildTrafficGrid() {
 
   const getText = td => td?.querySelector('textarea')?.value || '';
   const gfField = (label, val, selector, rowIdx, tableId) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
+    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
     >${_esc(val||'')}</div>
   </div>`;
   const simpleField = (label, val, selector, rowIdx, tableId) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
+    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
@@ -7587,14 +7582,14 @@ function buildFunnelsGrid() {
   const getLinkHref = td => { const a = td?.querySelector('a.link-chip'); const h = a?.href||''; return (h && h.startsWith('http')) ? h : ''; };
   const mkLink = (url, label) => url ? `<a href="${_esc(_safeHref(url))}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:10px;display:flex;align-items:center;gap:3px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="external-link"><path d="M15 3h6v6"/> <path d="M10 14 21 3"/> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>${label}</a>` : '';
   const gfField = (label, val, selector, rowIdx, tableId) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
+    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
     >${_esc(val||'')}</div>
   </div>`;
   const simpleField = (label, val, selector, rowIdx, tableId) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
+    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${selector}" data-row="${rowIdx}" data-table="${tableId}"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
@@ -7617,7 +7612,7 @@ function buildFunnelsGrid() {
     const efChipHtml = efv ? `<span class="gc-chip" style="--chip-bg:${efc.bg};--chip-c:${efc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${efv === 'ef-yes' ? 'Yes' : 'No'}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
     const efOpts = efSel ? Array.from(efSel.options).map(o => `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`).join('') : '';
     const efChip = efSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">In Everflow?</div>
+      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">In Everflow?</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
         ${efChipHtml}
         <select data-row="${idx}" data-table="funnels-body" data-tdidx="4"
@@ -7645,7 +7640,7 @@ function buildFunnelsGrid() {
     const sc = SOURCE_CHIP_COLORS[sv] || {bg:'#E5E7EB',color:'#374151'};
     const sourceChipHtml = sv ? `<span class="gc-chip" style="--chip-bg:${sc.bg};--chip-c:${sc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${_esc(st)}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
     const sourceChip = sourceSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Traffic source</div>
+      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">Traffic source</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
         ${sourceChipHtml}
         <select data-row="${idx}" data-table="funnels-body" data-tdidx="8"
@@ -7655,7 +7650,7 @@ function buildFunnelsGrid() {
       </span>
     </div>` : '';
     const typeChip = funnelSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Funnel type</div>
+      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">Funnel type</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
         ${funnelChipHtml}
         <select data-row="${idx}" data-table="funnels-body" data-tdidx="9"
@@ -7704,7 +7699,7 @@ function buildAdsGrid() {
   const mkLink = (url, label) => url && url !== '#' && !url.endsWith('#')
     ? `<a href="${_esc(_safeHref(url))}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:10px;display:flex;align-items:center;gap:3px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="external-link"><path d="M15 3h6v6"/> <path d="M10 14 21 3"/> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>${label}</a>` : '';
   const field = (label, val, taSelector, rowIdx, h=52) => `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
+    <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
     <div class="gce" contenteditable="false" spellcheck="false" data-ta="${taSelector}" data-row="${rowIdx}" data-table="ads-body"
       style="color:${val?'var(--text-primary)':'var(--text-secondary)'};outline:none;overflow:hidden;cursor:default;min-width:20px;white-space:pre-wrap;word-break:break-word;opacity:${val?'1':'0.4'};font-size:13px;line-height:1.45;"
       onclick="gcExpand(this)"
@@ -7768,7 +7763,7 @@ function buildAdsGrid() {
       `<option value="${_esc(o.value)}"${o.selected?' selected':''}>${_esc(o.text)}</option>`
     ).join('');
     return `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
-      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
+      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform: none;letter-spacing:0.06em;margin-bottom:3px;">${label}</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
         ${chipHtml}
         <select data-row="${rowIdx}" data-table="${tableId}" data-tdidx="${tdIdx}"
@@ -7866,7 +7861,7 @@ function buildAdsGrid() {
         ${renderChip(tds[3], 'Format', idx, 'ads-body')}
         ${field('Geo', geo, 'td:nth-child(5)', idx)}
         ${field('Lifecycle', lifecycle, 'td:nth-child(6)', idx)}
-        <div class="card-expand-toggle" onclick="toggleCardExpand(this)" style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 0;margin-bottom:4px;color:#374151;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;user-select:none;">
+        <div class="card-expand-toggle" onclick="toggleCardExpand(this)" style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 0;margin-bottom:4px;color:#374151;font-size:11px;font-weight:700;text-transform: none;letter-spacing:0.06em;user-select:none;">
           <svg class="card-expand-icon" width="10" height="10" style="transition:transform 0.2s;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"><path d="m6 9 6 6 6-6"/></svg>
           <span class="card-expand-label">Angle, Headline, Notes…</span>
         </div>
@@ -13195,6 +13190,9 @@ window.addEventListener('DOMContentLoaded', function() {
   .ins-full h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
   .ins-full p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.55; color: var(--text-primary); }
   .ins-card[hidden] { display: none !important; }
+  /* read-only pages: How to start / What's working on the overview; the four notes cards are gone (the editor keeps them) */
+  body.ins-on-overview:not(.board-view) #insights:not([style*="none"]) { display: grid !important; }
+  body.ins-on-overview #ic-grid-notes { display: none !important; }
   @media (max-width: 860px) { .ins { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
     .mx { padding: 16px; }
@@ -13252,10 +13250,27 @@ window.addEventListener('DOMContentLoaded', function() {
     box.hidden = false;
   }
 
-  function renderInsights(pd) {
+  // How to start / What's working: the cleaned summaries (partner_reports_live); a report without them (not on the
+  // publishers site) shows its own notes in the same two cards (owner, 2026-10-23: "new logic like in publishers")
+  function _ovNotesInsights(data) {
+    const n = (data && data.notes) || {}, t = v => String(v || '').trim();
+    const todoFull = {}, workingFull = {};
+    if (t(n.creativeActions)) todoFull['Creatives'] = t(n.creativeActions);
+    if (t(n.mediaActions)) todoFull['Media buying'] = t(n.mediaActions);
+    if (t(n.creativeTakeaways)) workingFull['Creatives'] = t(n.creativeTakeaways);
+    if (t(n.mediaTakeaways)) workingFull['Media buying'] = t(n.mediaTakeaways);
+    return Object.keys(todoFull).length || Object.keys(workingFull).length ? { todo: [], working: [], todoFull, workingFull } : null;
+  }
+  function renderInsights(pd, data) {
     const box = document.getElementById('insights');
     if (!box) return;
-    const ins = pd && pd.insights;
+    // read-only pages: the two cards sit on the overview, above Full research, instead of the four notes cards
+    if (_ovViewer()) {
+      document.body.classList.add('ins-on-overview');
+      const bar = document.getElementById('fr-bar');
+      if (bar && box.nextElementSibling !== bar) bar.before(box);
+    }
+    const ins = (pd && pd.insights) || (_ovViewer() ? _ovNotesInsights(data) : null);
     const fill = (id, bullets, full) => {
       const card = document.getElementById(id);
       const sections = Object.entries(full || {}).filter(([, t]) => t && t.trim());
@@ -13391,7 +13406,7 @@ window.addEventListener('DOMContentLoaded', function() {
     const id = typeof _currentOfferId !== 'undefined' ? _currentOfferId : null;
     const row = rows.find(r => r.id === id) || rows.find(r => r.data?.header?.title && r.data.header.title === data?.header?.title);
     const pd = row ? row.data : null;
-    renderSnapshot(pd); renderInsights(pd); renderMeta(data, pd);
+    renderSnapshot(pd); renderInsights(pd, data); renderMeta(data, pd);
   }
   function toggleFullResearch() {
     const open = document.body.classList.toggle('fr-open');
@@ -13456,7 +13471,7 @@ window.addEventListener('DOMContentLoaded', function() {
 <style>
   /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
   #n8n-chat {
-    --chat--font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --chat--font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     --chat--color--primary: var(--accent); --chat--color--primary-shade-50: var(--accent-hover); --chat--color--primary--shade-100: var(--accent-hover);
     --chat--color--secondary: var(--accent); --chat--color-secondary-shade-50: var(--accent-hover);
     --chat--color-white: var(--surface); --chat--color-light: var(--bg-secondary); --chat--color-light-shade-50: var(--bg-tertiary);
